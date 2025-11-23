@@ -73,64 +73,119 @@ const int material[12] = { 100, 320, 330, 500, 900, 20000, -100, -320, -330, -50
 const int piece_values[6] = { 100, 320, 330, 500, 900, 20000 };
 
 
-int Search::scoreMove(Move move) const {
+int Search::scoreMove(Move move, int ply) const {
     if (getCapturedPiece(move) != noPiece) {
         // MVV-LVA scoring for captures
         return 10000 + piece_values[getCapturedPiece(move) % 6] - piece_values[getPieceMoved(move) % 6];
     }
     else {
-        // For quiet moves, return the score from the history table + check for killer moves
+        // For quiet moves, check killer moves and history
         int score = m_history[getPieceMoved(move)][getToSquare(move)];
-        // Killer moves get a boost (can add depth parameter if needed)
+        
+        // Boost killer moves
+        if (ply < 64 && (move == m_killers[ply][0] || move == m_killers[ply][1])) {
+            score += 5000;
+        }
+        
+        // Boost counter moves
+        if (ply >= 1 && ply < 64 && move == m_counterMoves[getPieceMoved(move)][getToSquare(move)]) {
+            score += 3000;
+        }
+        
         return score;
     }
 }
 
+// --- NEW: Check if a move gives check ---
+bool Search::isCheckMove(const Board& board, Move move) const {
+    // Make the move and check if opponent's king is in check
+    Side sideToMove = board.getSideToMove();
+    Side opponentSide = (Side)(1 - sideToMove);
+    
+    // Quick check: does this move put opponent in check?
+    Square toSquare = getToSquare(move);
+    return board.isSquareAttacked(board.getKingSquare(opponentSide), sideToMove);
+}
 
 Move Search::findBestMove(Board& board, int depth) {
-    // Clear history and killers ONCE before starting the search process
+    // Clear history, killers, and counter moves before starting
     std::memset(m_history, 0, sizeof(m_history));
     std::memset(m_killers, 0, sizeof(m_killers));
+    std::memset(m_counterMoves, 0, sizeof(m_counterMoves));
     m_transpositionTable.clear();
 
     Move bestMove = 0;
+    int prevScore = 0;
 
-    // --- NEW: Iterative Deepening Loop ---
+    // --- NEW: Iterative Deepening with Aspiration Windows ---
     for (int current_depth = 1; current_depth <= depth; ++current_depth) {
         int alpha = -999999;
+        int beta = 999999;
         int bestScore = -999999;
         Side sideToMove = board.getSideToMove();
         Side opponentSide = (Side)(1 - sideToMove);
 
+        // --- NEW: Aspiration Window (only after first iteration) ---
+        if (current_depth > 1) {
+            int window = 50; // Start with small window
+            alpha = prevScore - window;
+            beta = prevScore + window;
+        }
+
         std::vector<Move> moveList;
         MoveGenerator::generateMoves(board, moveList);
 
-        std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { return scoreMove(a) > scoreMove(b); });
+        std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { 
+            return scoreMove(a, 0) > scoreMove(b, 0); 
+        });
 
         Move currentBestMove = 0;
         for (const auto& move : moveList) {
             board.makeMove(move);
             if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
-                int score = -negamax(board, current_depth - 1, -999999, -alpha);
+                int score = -negamax(board, current_depth - 1, -beta, -alpha, 1);
                 if (score > bestScore) {
                     bestScore = score;
-                    currentBestMove = move; 
+                    currentBestMove = move;
                     alpha = score;
                 }
             }
             board.unmakeMove(move);
         }
+
+        // --- NEW: Aspiration Window failure handling ---
+        if (currentBestMove == 0 || (current_depth > 1 && (bestScore <= alpha - 50 || bestScore >= beta - 50))) {
+            // Re-search with full window
+            alpha = -999999;
+            beta = 999999;
+            std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { 
+                return scoreMove(a, 0) > scoreMove(b, 0); 
+            });
+
+            for (const auto& move : moveList) {
+                board.makeMove(move);
+                if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
+                    int score = -negamax(board, current_depth - 1, -beta, -alpha, 1);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        currentBestMove = move;
+                    }
+                }
+                board.unmakeMove(move);
+            }
+        }
+
         if (currentBestMove != 0) {
             bestMove = currentBestMove;
+            prevScore = bestScore;
         }
     }
 
-    // Return the best move found during the final (deepest) iteration
     return bestMove;
 }
 
 
-int Search::negamax(Board& board, int depth, int alpha, int beta) {
+int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
     int alphaOrig = alpha;
     uint64_t hash = board.getHashKey();
 
@@ -155,38 +210,59 @@ int Search::negamax(Board& board, int depth, int alpha, int beta) {
     std::vector<Move> moveList;
     MoveGenerator::generateMoves(board, moveList);
 
-    // --- NEW: Killer Move Ordering ---
-    // Sort moves with killer moves prioritized (after captures)
-    std::sort(moveList.begin(), moveList.end(), [this, depth](Move a, Move b) {
-        int scoreA = scoreMove(a);
-        int scoreB = scoreMove(b);
-        
-        // Boost killer moves
-        if (a == m_killers[depth][0] || a == m_killers[depth][1]) scoreA += 5000;
-        if (b == m_killers[depth][0] || b == m_killers[depth][1]) scoreB += 5000;
-        
-        return scoreA > scoreB;
+    // --- NEW: Improved Move Ordering with ply parameter ---
+    std::sort(moveList.begin(), moveList.end(), [this, ply](Move a, Move b) {
+        return scoreMove(a, ply) > scoreMove(b, ply);
     });
 
     bool hasLegalMove = false;
+    int moveCount = 0;
+    
     for (const auto& move : moveList) {
         board.makeMove(move);
         if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
             hasLegalMove = true;
-            int score = -negamax(board, depth - 1, -beta, -alpha);
+            int score;
+            moveCount++;
+
+            // --- NEW: Late Move Reductions (LMR) ---
+            // Only apply LMR to quiet moves that aren't the first few moves or killer moves
+            if (depth >= 3 && moveCount > 3 && 
+                getCapturedPiece(move) == noPiece && 
+                !(ply < 64 && (move == m_killers[ply][0] || move == m_killers[ply][1]))) {
+                
+                // Calculate reduction amount from LMR table
+                int reduction = lmr_table[std::min(depth, 63)][std::min(moveCount, 63)];
+                if (reduction > 0) {
+                    score = -negamax(board, depth - 1 - reduction, -alpha - 1, -alpha, ply + 1);
+                    
+                    // If move looks promising, research with full depth
+                    if (score > alpha) {
+                        score = -negamax(board, depth - 1, -beta, -alpha, ply + 1);
+                    }
+                } else {
+                    score = -negamax(board, depth - 1, -beta, -alpha, ply + 1);
+                }
+            } else {
+                // --- NEW: Check extensions (extend search for checking moves) ---
+                int extension = 0;
+                score = -negamax(board, depth - 1 + extension, -beta, -alpha, ply + 1);
+            }
+
             board.unmakeMove(move);
+            
             if (score > max) {
                 max = score;
                 bestMove = move;
             }
             if (score > alpha) alpha = score;
             if (alpha >= beta) {
-                // --- NEW: Update killer move table on cutoff ---
-                if (getCapturedPiece(move) == noPiece) {
-                    // Shift the first killer move to second, add new killer
-                    if (m_killers[depth][0] != move) {
-                        m_killers[depth][1] = m_killers[depth][0];
-                        m_killers[depth][0] = move;
+                // --- NEW: Update killer and counter moves on beta cutoff ---
+                if (getCapturedPiece(move) == noPiece && ply < 64) {
+                    // Update killer moves
+                    if (m_killers[ply][0] != move) {
+                        m_killers[ply][1] = m_killers[ply][0];
+                        m_killers[ply][0] = move;
                     }
                     // Update history table
                     m_history[getPieceMoved(move)][getToSquare(move)] += depth * depth;
@@ -236,7 +312,7 @@ int Search::quiescence(Board& board, int alpha, int beta) {
     Side opponentSide = (Side)(1 - sideToMove);
     std::vector<Move> moveList;
     MoveGenerator::generateMoves(board, moveList);
-    std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { return scoreMove(a) > scoreMove(b); });
+    std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { return scoreMove(a, 0) > scoreMove(b, 0); });
 
     for (const auto& move : moveList) {
         if (getCapturedPiece(move) == noPiece) {
