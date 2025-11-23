@@ -111,6 +111,100 @@ void Renderer::drawValidMoves(const std::vector<Move>& moves) const {
     }
 }
 
+void Renderer::drawCheckIndicator(const Board& board) const {
+    float size, offsetX, offsetY;
+    getBoardDimensions(size, offsetX, offsetY);
+    float squareSize = size / 8.0f;
+
+    Side currentSide = board.getSideToMove();
+    Side opponentSide = (Side)(1 - currentSide);
+    Square kingSquare = board.getKingSquare(currentSide);
+
+    // Check if the king is under attack
+    if (board.isSquareAttacked(kingSquare, opponentSide)) {
+        int file = kingSquare % 8;
+        int rank = 7 - (kingSquare / 8);
+        float kingX = offsetX + file * squareSize;
+        float kingY = offsetY + rank * squareSize;
+
+        // Draw red glow effect around the king
+        for (int i = 3; i > 0; --i) {
+            float radius = (squareSize / 2.0f) * (i / 3.0f);
+            Color glowColor = { 255, 0, 0, (unsigned char)(180 - i * 50) };
+            DrawRectangleLines(kingX, kingY, squareSize, squareSize, glowColor);
+        }
+
+        // Draw a pulsing red border
+        DrawRectangleLines(kingX, kingY, squareSize, squareSize, { 255, 0, 0, 255 });
+    }
+}
+
+void Renderer::drawLastMove(Move lastMove) const {
+    if (lastMove == 0) return;
+
+    float size, offsetX, offsetY;
+    getBoardDimensions(size, offsetX, offsetY);
+    float squareSize = size / 8.0f;
+
+    Square fromSquare = getFromSquare(lastMove);
+    Square toSquare = getToSquare(lastMove);
+
+    // Draw glow on the from square
+    {
+        int file = fromSquare % 8;
+        int rank = 7 - (fromSquare / 8);
+        float squareX = offsetX + file * squareSize;
+        float squareY = offsetY + rank * squareSize;
+
+        // Yellow glow for from square
+        Color glowColor = { 255, 255, 100, 100 };
+        DrawRectangle(squareX, squareY, squareSize, squareSize, glowColor);
+        DrawRectangleLines(squareX, squareY, squareSize, squareSize, { 200, 200, 0, 200 });
+    }
+
+    // Draw glow on the to square
+    {
+        int file = toSquare % 8;
+        int rank = 7 - (toSquare / 8);
+        float squareX = offsetX + file * squareSize;
+        float squareY = offsetY + rank * squareSize;
+
+        // Green glow for to square
+        Color glowColor = { 100, 255, 100, 100 };
+        DrawRectangle(squareX, squareY, squareSize, squareSize, glowColor);
+        DrawRectangleLines(squareX, squareY, squareSize, squareSize, { 0, 200, 0, 200 });
+    }
+}
+
+void Renderer::drawGameOverScreen(Side winner, bool isCheckmate) const {
+    int screenWidth = GetScreenWidth();
+    int screenHeight = GetScreenHeight();
+
+    // Draw semi-transparent dark overlay
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade({ 0, 0, 0 }, 0.7f));
+
+    // Determine the winner text
+    const char* winnerText = (winner == W) ? "White Wins!" : "Black Wins!";
+    const char* conditionText = isCheckmate ? "Checkmate!" : "Stalemate!";
+    
+    // Draw winner announcement
+    int fontSize1 = 80;
+    int textWidth1 = MeasureText(winnerText, fontSize1);
+    Color winnerColor = (winner == W) ? Color{ 238, 238, 210, 255 } : Color{ 118, 150, 86, 255 };
+    DrawText(winnerText, (screenWidth - textWidth1) / 2, (screenHeight / 2) - 80, fontSize1, winnerColor);
+
+    // Draw condition text (Checkmate or Stalemate)
+    int fontSize2 = 40;
+    int textWidth2 = MeasureText(conditionText, fontSize2);
+    DrawText(conditionText, (screenWidth - textWidth2) / 2, (screenHeight / 2) + 40, fontSize2, WHITE);
+
+    // Draw instructions to restart
+    const char* restartText = "Press R to Restart or Q to Quit";
+    int fontSize3 = 20;
+    int textWidth3 = MeasureText(restartText, fontSize3);
+    DrawText(restartText, (screenWidth - textWidth3) / 2, (screenHeight / 2) + 120, fontSize3, { 200, 200, 200, 255 });
+}
+
 
 // --- HELPER FUNCTION ---
 

@@ -60,14 +60,34 @@ void MoveGenerator::initKingAttacks(int sq) {
 void MoveGenerator::initKnightAttacks(int sq) {
     uint64_t b = 1ULL << sq;
     uint64_t attacks = 0;
-    if ((b & notHFile) > 0) attacks |= (b << 17);
-    if ((b & notAFile) > 0) attacks |= (b << 15);
-    if ((b & notHFile & (notHFile - 1)) > 0) attacks |= (b << 10);
-    if ((b & notAFile & (notAFile - 1)) > 0) attacks |= (b << 6);
-    if ((b & notAFile) > 0) attacks |= (b >> 17);
-    if ((b & notHFile) > 0) attacks |= (b >> 15);
-    if ((b & notAFile & (notAFile - 1)) > 0) attacks |= (b >> 10);
-    if ((b & notHFile & (notHFile - 1)) > 0) attacks |= (b >> 6);
+    int file = sq % 8;
+    int rank = sq / 8;
+    
+    // Knight moves: all 8 possible L-shaped moves
+    // +17: 2 up, 1 right (need rank < 6, file < 7)
+    if (rank < 6 && file < 7) attacks |= (b << 17);
+    
+    // +15: 2 up, 1 left (need rank < 6, file > 0)
+    if (rank < 6 && file > 0) attacks |= (b << 15);
+    
+    // +10: 1 up, 2 right (need rank < 7, file < 6)
+    if (rank < 7 && file < 6) attacks |= (b << 10);
+    
+    // +6: 1 up, 2 left (need rank < 7, file > 1)
+    if (rank < 7 && file > 1) attacks |= (b << 6);
+    
+    // -6: 1 down, 2 right (need rank > 0, file < 6)
+    if (rank > 0 && file < 6) attacks |= (b >> 6);
+    
+    // -10: 1 down, 2 left (need rank > 0, file > 1)
+    if (rank > 0 && file > 1) attacks |= (b >> 10);
+    
+    // -15: 2 down, 1 right (need rank > 1, file < 7)
+    if (rank > 1 && file < 7) attacks |= (b >> 15);
+    
+    // -17: 2 down, 1 left (need rank > 1, file > 0)
+    if (rank > 1 && file > 0) attacks |= (b >> 17);
+    
     knight_attacks[sq] = attacks;
 }
 

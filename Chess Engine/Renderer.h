@@ -26,6 +26,15 @@ public:
     // Draws visual indicators (e.g., green squares) for all legal moves.
     void drawValidMoves(const std::vector<Move>& moves) const;
 
+    // Draws a check indicator (red glow) around the king's square
+    void drawCheckIndicator(const Board& board) const;
+
+    // Draws the last move indicator (glow on from and to squares)
+    void drawLastMove(Move lastMove) const;
+
+    // Draws the game over screen with winner announcement
+    void drawGameOverScreen(Side winner, bool isCheckmate) const;
+
     // Helper function to provide the board's screen layout information.
     // This is used by main.cpp to calculate mouse-to-square conversions.
     void getBoardDimensions(float& size, float& offsetX, float& offsetY) const;
