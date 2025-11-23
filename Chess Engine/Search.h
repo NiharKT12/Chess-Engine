@@ -28,5 +28,14 @@ private:
     // --- NEW: History Heuristic Table ---
     // Stores a score for each quiet move (piece type on a destination square).
     int m_history[12][64];
+
+    // --- NEW: Killer Move Heuristic ---
+    // Stores two killer moves per depth level
+    Move m_killers[64][2];
+
+    // --- NEW: Evaluation Helper Functions ---
+    int evaluateKingSafety(const Board& board);
+    int evaluatePawnStructure(const Board& board);
+    int evaluatePieceMobility(const Board& board);
 };
 

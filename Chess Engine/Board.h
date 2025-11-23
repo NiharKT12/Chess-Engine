@@ -38,11 +38,13 @@ public:
     // Getter for the current position's hash key
     uint64_t getHashKey() const { return m_hashKey; }
 
+    // --- NEW: Make attack calculation methods available for evaluation ---
+    uint64_t getRookAttacks(Square sq, uint64_t occupied) const;
+    uint64_t getBishopAttacks(Square sq, uint64_t occupied) const;
+
 private:
     void removePiece(pieceType pt, Square sq);
     void addPiece(pieceType pt, Square sq);
-    uint64_t getRookAttacks(Square sq, uint64_t occupied) const;
-    uint64_t getBishopAttacks(Square sq, uint64_t occupied) const;
 
     uint64_t m_pieceBitboards[12];
     Side m_sideToMove;

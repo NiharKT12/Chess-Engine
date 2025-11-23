@@ -23,6 +23,14 @@ inline Square pop_lsb(uint64_t& bitboard) {
     return lsb_index;
 }
 
+// --- Helper function for bitcount on MSVC and GCC ---
+inline int popcount(uint64_t x) {
+#ifdef _MSC_VER
+    return static_cast<int>(__popcnt64(x));
+#else
+    return __builtin_popcountll(x);
+#endif
+}
 
 // --- Piece-Square Tables (PSTs) and Material Values ---
 const int pawn_pst[64] = {
@@ -71,15 +79,18 @@ int Search::scoreMove(Move move) const {
         return 10000 + piece_values[getCapturedPiece(move) % 6] - piece_values[getPieceMoved(move) % 6];
     }
     else {
-        // For quiet moves, return the score from the history table
-        return m_history[getPieceMoved(move)][getToSquare(move)];
+        // For quiet moves, return the score from the history table + check for killer moves
+        int score = m_history[getPieceMoved(move)][getToSquare(move)];
+        // Killer moves get a boost (can add depth parameter if needed)
+        return score;
     }
 }
 
 
 Move Search::findBestMove(Board& board, int depth) {
-    // Clear history ONCE before starting the search process
+    // Clear history and killers ONCE before starting the search process
     std::memset(m_history, 0, sizeof(m_history));
+    std::memset(m_killers, 0, sizeof(m_killers));
     m_transpositionTable.clear();
 
     Move bestMove = 0;
@@ -144,7 +155,18 @@ int Search::negamax(Board& board, int depth, int alpha, int beta) {
     std::vector<Move> moveList;
     MoveGenerator::generateMoves(board, moveList);
 
-    std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { return scoreMove(a) > scoreMove(b); });
+    // --- NEW: Killer Move Ordering ---
+    // Sort moves with killer moves prioritized (after captures)
+    std::sort(moveList.begin(), moveList.end(), [this, depth](Move a, Move b) {
+        int scoreA = scoreMove(a);
+        int scoreB = scoreMove(b);
+        
+        // Boost killer moves
+        if (a == m_killers[depth][0] || a == m_killers[depth][1]) scoreA += 5000;
+        if (b == m_killers[depth][0] || b == m_killers[depth][1]) scoreB += 5000;
+        
+        return scoreA > scoreB;
+    });
 
     bool hasLegalMove = false;
     for (const auto& move : moveList) {
@@ -159,8 +181,14 @@ int Search::negamax(Board& board, int depth, int alpha, int beta) {
             }
             if (score > alpha) alpha = score;
             if (alpha >= beta) {
-                // Update history table on a quiet move cutoff
+                // --- NEW: Update killer move table on cutoff ---
                 if (getCapturedPiece(move) == noPiece) {
+                    // Shift the first killer move to second, add new killer
+                    if (m_killers[depth][0] != move) {
+                        m_killers[depth][1] = m_killers[depth][0];
+                        m_killers[depth][0] = move;
+                    }
+                    // Update history table
                     m_history[getPieceMoved(move)][getToSquare(move)] += depth * depth;
                 }
                 break; // Pruning
@@ -259,6 +287,191 @@ int Search::evaluate(const Board& board) {
             else if (pt == blackKing) score -= king_pst[63 - sq];
         }
     }
+    
+    // --- NEW: Add positional evaluations ---
+    score += evaluateKingSafety(board);
+    score += evaluatePawnStructure(board);
+    score += evaluatePieceMobility(board);
+    
     return (sideToMove == W) ? score : -score;
+}
+
+// --- NEW: King Safety Evaluation ---
+int Search::evaluateKingSafety(const Board& board) {
+    int score = 0;
+    
+    // Evaluate white king safety
+    Square wKingSquare = board.getKingSquare(W);
+    uint64_t wKingZone = MoveGenerator::king_attacks[wKingSquare];
+    
+    // Count attacking pieces around white's king
+    uint64_t blackPawns = board.getPieceBitboard(blackPawn);
+    uint64_t blackKnights = board.getPieceBitboard(blackKnight);
+    uint64_t blackBishops = board.getPieceBitboard(blackBishop);
+    uint64_t blackRooks = board.getPieceBitboard(blackRook);
+    uint64_t blackQueens = board.getPieceBitboard(blackQueen);
+    
+    int whiteKingAttackers = 0;
+    if (wKingZone & blackPawns) whiteKingAttackers++;
+    if (wKingZone & blackKnights) whiteKingAttackers += 2;
+    if (wKingZone & (blackBishops | blackQueens)) whiteKingAttackers += 2;
+    if (wKingZone & (blackRooks | blackQueens)) whiteKingAttackers += 3;
+    
+    // Penalize exposed white king
+    score -= whiteKingAttackers * 15;
+    
+    // Evaluate black king safety
+    Square bKingSquare = board.getKingSquare(B);
+    uint64_t bKingZone = MoveGenerator::king_attacks[bKingSquare];
+    
+    uint64_t whitePawns = board.getPieceBitboard(whitePawn);
+    uint64_t whiteKnights = board.getPieceBitboard(whiteKnight);
+    uint64_t whiteBishops = board.getPieceBitboard(whiteBishop);
+    uint64_t whiteRooks = board.getPieceBitboard(whiteRook);
+    uint64_t whiteQueens = board.getPieceBitboard(whiteQueen);
+    
+    int blackKingAttackers = 0;
+    if (bKingZone & whitePawns) blackKingAttackers++;
+    if (bKingZone & whiteKnights) blackKingAttackers += 2;
+    if (bKingZone & (whiteBishops | whiteQueens)) blackKingAttackers += 2;
+    if (bKingZone & (whiteRooks | whiteQueens)) blackKingAttackers += 3;
+    
+    // Reward attacking black king (penalty to opponent)
+    score += blackKingAttackers * 15;
+    
+    return score;
+}
+
+// --- NEW: Pawn Structure Evaluation ---
+int Search::evaluatePawnStructure(const Board& board) {
+    int score = 0;
+    
+    uint64_t whitePawns = board.getPieceBitboard(whitePawn);
+    uint64_t blackPawns = board.getPieceBitboard(blackPawn);
+    
+    // Evaluate white pawns
+    uint64_t wPawns = whitePawns;
+    while (wPawns) {
+        Square sq = pop_lsb(wPawns);
+        int file = sq % 8;
+        int rank = sq / 8;
+        
+        // Penalize doubled pawns
+        if ((whitePawns >> 8) & (1ULL << (sq - 8))) {
+            score -= 25;
+        }
+        
+        // Penalize isolated pawns
+        uint64_t adjacentFiles = 0;
+        if (file > 0) adjacentFiles |= (1ULL << (sq - 1)) | (1ULL << (sq + 7)) | (1ULL << (sq - 9));
+        if (file < 7) adjacentFiles |= (1ULL << (sq + 1)) | (1ULL << (sq + 9)) | (1ULL << (sq - 7));
+        
+        if (!(whitePawns & adjacentFiles)) {
+            score -= 20;
+        }
+        
+        // Reward passed pawns (no black pawns blocking or on adjacent files ahead)
+        uint64_t blockingPawns = 0;
+        for (int r = rank + 1; r < 8; ++r) {
+            blockingPawns |= (blackPawns & ((1ULL << (file + r * 8)) | 
+                             ((file > 0) ? (1ULL << (file - 1 + r * 8)) : 0) |
+                             ((file < 7) ? (1ULL << (file + 1 + r * 8)) : 0)));
+        }
+        if (blockingPawns == 0) {
+            score += 50 + (rank * 10); // Bonus increases as pawn advances
+        }
+    }
+    
+    // Evaluate black pawns
+    uint64_t bPawns = blackPawns;
+    while (bPawns) {
+        Square sq = pop_lsb(bPawns);
+        int file = sq % 8;
+        int rank = sq / 8;
+        
+        // Penalize doubled pawns
+        if ((blackPawns << 8) & (1ULL << (sq + 8))) {
+            score += 25;
+        }
+        
+        // Penalize isolated pawns
+        uint64_t adjacentFiles = 0;
+        if (file > 0) adjacentFiles |= (1ULL << (sq - 1)) | (1ULL << (sq + 7)) | (1ULL << (sq - 9));
+        if (file < 7) adjacentFiles |= (1ULL << (sq + 1)) | (1ULL << (sq + 9)) | (1ULL << (sq - 7));
+        
+        if (!(blackPawns & adjacentFiles)) {
+            score += 20;
+        }
+        
+        // Reward passed pawns
+        uint64_t blockingPawns = 0;
+        for (int r = rank - 1; r >= 0; --r) {
+            blockingPawns |= (whitePawns & ((1ULL << (file + r * 8)) |
+                             ((file > 0) ? (1ULL << (file - 1 + r * 8)) : 0) |
+                             ((file < 7) ? (1ULL << (file + 1 + r * 8)) : 0)));
+        }
+        if (blockingPawns == 0) {
+            score -= 50 + ((7 - rank) * 10);
+        }
+    }
+    
+    return score;
+}
+
+// --- NEW: Piece Mobility Evaluation ---
+int Search::evaluatePieceMobility(const Board& board) {
+    int score = 0;
+    
+    // Evaluate white pieces
+    uint64_t whiteKnights = board.getPieceBitboard(whiteKnight);
+    while (whiteKnights) {
+        Square sq = pop_lsb(whiteKnights);
+        uint64_t moves = MoveGenerator::knight_attacks[sq] & ~board.getPieces(W);
+        int moveCount = popcount(moves);
+        score += moveCount * 2;
+    }
+    
+    uint64_t whiteRooks = board.getPieceBitboard(whiteRook);
+    while (whiteRooks) {
+        Square sq = pop_lsb(whiteRooks);
+        uint64_t moves = board.getRookAttacks(sq, board.getOccupied()) & ~board.getPieces(W);
+        int moveCount = popcount(moves);
+        score += moveCount;
+    }
+    
+    uint64_t whiteBishops = board.getPieceBitboard(whiteBishop);
+    while (whiteBishops) {
+        Square sq = pop_lsb(whiteBishops);
+        uint64_t moves = board.getBishopAttacks(sq, board.getOccupied()) & ~board.getPieces(W);
+        int moveCount = popcount(moves);
+        score += moveCount;
+    }
+    
+    // Evaluate black pieces
+    uint64_t blackKnights = board.getPieceBitboard(blackKnight);
+    while (blackKnights) {
+        Square sq = pop_lsb(blackKnights);
+        uint64_t moves = MoveGenerator::knight_attacks[sq] & ~board.getPieces(B);
+        int moveCount = popcount(moves);
+        score -= moveCount * 2;
+    }
+    
+    uint64_t blackRooks = board.getPieceBitboard(blackRook);
+    while (blackRooks) {
+        Square sq = pop_lsb(blackRooks);
+        uint64_t moves = board.getRookAttacks(sq, board.getOccupied()) & ~board.getPieces(B);
+        int moveCount = popcount(moves);
+        score -= moveCount;
+    }
+    
+    uint64_t blackBishops = board.getPieceBitboard(blackBishop);
+    while (blackBishops) {
+        Square sq = pop_lsb(blackBishops);
+        uint64_t moves = board.getBishopAttacks(sq, board.getOccupied()) & ~board.getPieces(B);
+        int moveCount = popcount(moves);
+        score -= moveCount;
+    }
+    
+    return score;
 }
 
