@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <raylib.h>
 #include <vector>
 #include <map>
@@ -16,6 +15,10 @@ public:
     Renderer();
     // Destructor: Unloads all graphical assets to free memory.
     ~Renderer();
+
+    // --- NEW: Set the perspective (player side) ---
+    // Call this to rotate the board when player is black
+    void setPerspective(Side playerSide);
 
     // Draws the checkerboard pattern on the screen.
     void drawBoard() const;
@@ -39,7 +42,16 @@ public:
     // This is used by main.cpp to calculate mouse-to-square conversions.
     void getBoardDimensions(float& size, float& offsetX, float& offsetY) const;
 
+    // --- NEW: Get the perspective (white or black) ---
+    Side getPerspective() const { return m_perspective; }
+
 private:
+    // --- NEW: Track the player's perspective ---
+    Side m_perspective = W;
+
+    // --- NEW: Helper function to convert square based on perspective ---
+    void getDisplayCoordinates(Square sq, int& displayFile, int& displayRank) const;
+
     // A map to store the texture for each piece type and color.
     // Using a map makes looking up the correct texture easy and safe.
     std::map<pieceType, Texture2D> m_pieceTextures;

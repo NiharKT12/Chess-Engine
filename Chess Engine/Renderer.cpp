@@ -30,6 +30,9 @@ Renderer::Renderer() {
             std::cerr << "ERROR: Failed to load texture for pieceType index " << pair.first << std::endl;
         }
     }
+
+    // --- NEW: Initialize perspective to white ---
+    m_perspective = W;
 }
 
 Renderer::~Renderer() {
@@ -41,6 +44,26 @@ Renderer::~Renderer() {
 
 
 // --- DRAWING FUNCTIONS ---
+
+void Renderer::setPerspective(Side playerSide) {
+    m_perspective = playerSide;
+}
+
+// --- NEW: Helper function to get display coordinates based on perspective ---
+void Renderer::getDisplayCoordinates(Square sq, int& displayFile, int& displayRank) const {
+    int file = sq % 8;
+    int rank = sq / 8;
+
+    if (m_perspective == W) {
+        // White perspective: rank 0 at bottom (display as rank 7)
+        displayFile = file;
+        displayRank = 7 - rank;
+    } else {
+        // Black perspective: rotate 180 degrees
+        displayFile = 7 - file;
+        displayRank = rank;
+    }
+}
 
 void Renderer::drawBoard() const {
     float size, offsetX, offsetY;
@@ -73,10 +96,10 @@ void Renderer::drawPieces(const Board& board) const {
                 // ...find its texture in our map...
                 Texture2D texture = m_pieceTextures.at(pt);
 
-                // ...calculate its position on the screen...
-                int file = sq % 8;
-                int rank = 7 - (sq / 8); // Invert rank for drawing (0,0 is top-left)
-                Vector2 position = { offsetX + file * squareSize, offsetY + rank * squareSize };
+                // ...calculate its position on the screen using perspective...
+                int displayFile, displayRank;
+                getDisplayCoordinates(sq, displayFile, displayRank);
+                Vector2 position = { offsetX + displayFile * squareSize, offsetY + displayRank * squareSize };
 
                 // ...and draw it, scaled to fit the square.
                 DrawTextureEx(texture, position, 0.0f, squareSize / texture.width, WHITE);
@@ -100,12 +123,14 @@ void Renderer::drawValidMoves(const std::vector<Move>& moves) const {
 
     for (const auto& move : moves) {
         Square toSquare = getToSquare(move);
-        int file = toSquare % 8;
-        int rank = 7 - (toSquare / 8);
+        
+        // --- NEW: Use perspective-aware coordinates ---
+        int displayFile, displayRank;
+        getDisplayCoordinates(toSquare, displayFile, displayRank);
 
         // Calculate the center of the destination square
-        float circleX = offsetX + file * squareSize + squareSize / 2.0f;
-        float circleY = offsetY + rank * squareSize + squareSize / 2.0f;
+        float circleX = offsetX + displayFile * squareSize + squareSize / 2.0f;
+        float circleY = offsetY + displayRank * squareSize + squareSize / 2.0f;
 
         DrawCircleV({ circleX, circleY }, squareSize / 4.0f, moveIndicatorColor);
     }
@@ -122,10 +147,11 @@ void Renderer::drawCheckIndicator(const Board& board) const {
 
     // Check if the king is under attack
     if (board.isSquareAttacked(kingSquare, opponentSide)) {
-        int file = kingSquare % 8;
-        int rank = 7 - (kingSquare / 8);
-        float kingX = offsetX + file * squareSize;
-        float kingY = offsetY + rank * squareSize;
+        // --- NEW: Use perspective-aware coordinates ---
+        int displayFile, displayRank;
+        getDisplayCoordinates(kingSquare, displayFile, displayRank);
+        float kingX = offsetX + displayFile * squareSize;
+        float kingY = offsetY + displayRank * squareSize;
 
         // Draw red glow effect around the king
         for (int i = 3; i > 0; --i) {
@@ -151,10 +177,11 @@ void Renderer::drawLastMove(Move lastMove) const {
 
     // Draw glow on the from square
     {
-        int file = fromSquare % 8;
-        int rank = 7 - (fromSquare / 8);
-        float squareX = offsetX + file * squareSize;
-        float squareY = offsetY + rank * squareSize;
+        // --- NEW: Use perspective-aware coordinates ---
+        int displayFile, displayRank;
+        getDisplayCoordinates(fromSquare, displayFile, displayRank);
+        float squareX = offsetX + displayFile * squareSize;
+        float squareY = offsetY + displayRank * squareSize;
 
         // Yellow glow for from square
         Color glowColor = { 255, 255, 100, 100 };
@@ -164,10 +191,11 @@ void Renderer::drawLastMove(Move lastMove) const {
 
     // Draw glow on the to square
     {
-        int file = toSquare % 8;
-        int rank = 7 - (toSquare / 8);
-        float squareX = offsetX + file * squareSize;
-        float squareY = offsetY + rank * squareSize;
+        // --- NEW: Use perspective-aware coordinates ---
+        int displayFile, displayRank;
+        getDisplayCoordinates(toSquare, displayFile, displayRank);
+        float squareX = offsetX + displayFile * squareSize;
+        float squareY = offsetY + displayRank * squareSize;
 
         // Green glow for to square
         Color glowColor = { 100, 255, 100, 100 };

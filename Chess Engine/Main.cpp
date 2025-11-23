@@ -27,9 +27,26 @@ Square getSquareFromMouse(const Renderer& renderer) {
         mousePos.y < offsetY || mousePos.y >(offsetY + size)) {
         return NO_SQUARE;
     }
-    int file = (int)((mousePos.x - offsetX) / squareSize);
-    int rank = 7 - (int)((mousePos.y - offsetY) / squareSize);
-    return (Square)(rank * 8 + file);
+    
+    // Get clicked file and rank in screen space
+    int screenFile = (int)((mousePos.x - offsetX) / squareSize);
+    int screenRank = (int)((mousePos.y - offsetY) / squareSize);
+    
+    // --- NEW: Convert screen coordinates to board coordinates based on perspective ---
+    Side perspective = renderer.getPerspective();
+    int boardFile, boardRank;
+    
+    if (perspective == W) {
+        // White perspective: standard mapping
+        boardFile = screenFile;
+        boardRank = 7 - screenRank;
+    } else {
+        // Black perspective: rotate 180 degrees
+        boardFile = 7 - screenFile;
+        boardRank = screenRank;
+    }
+    
+    return (Square)(boardRank * 8 + boardFile);
 }
 
 // Function to draw the side selection menu
@@ -115,10 +132,12 @@ int main() {
                 if (whiteButtonHovered) {
                     playerSide = W;
                     gameState = IN_GAME;
+                    renderer.setPerspective(W);  // --- NEW: Set board perspective ---
                 }
                 else if (blackButtonHovered) {
                     playerSide = B;
                     gameState = IN_GAME;
+                    renderer.setPerspective(B);  // --- NEW: Set board perspective (rotated) ---
                 }
             }
 
@@ -140,6 +159,7 @@ int main() {
                 legalMoves.clear();
                 isGameOver = false;
                 lastMove = 0;
+                renderer.setPerspective(W);  // --- NEW: Reset perspective to white ---
             }
             else if (IsKeyPressed(KEY_Q)) {
                 break;  // Exit the game
