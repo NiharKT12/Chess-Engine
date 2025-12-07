@@ -33,5 +33,3 @@ This chess engine implements a fully functional chess game with:
 - ✅ Check indicator and last move visualization
 - ✅ Side selection menu (play as White or Black)
 - ✅ Game over detection with checkmate/stalemate handling
-
-## Project Structure
