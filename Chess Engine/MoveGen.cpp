@@ -26,7 +26,7 @@ inline Square pop_lsb(uint64_t& bitboard) {
 #else
     Square lsb_index = (Square)__builtin_ctzll(bitboard);
 #endif
-    bitboard &= bitboard - 1;
+    bitboard &= (bitboard - 1);
     return lsb_index;
 }
 

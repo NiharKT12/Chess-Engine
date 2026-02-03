@@ -38,9 +38,14 @@ public:
     // Getter for the current position's hash key
     uint64_t getHashKey() const { return m_hashKey; }
 
+
     // --- NEW: Make attack calculation methods available for evaluation ---
     uint64_t getRookAttacks(Square sq, uint64_t occupied) const;
     uint64_t getBishopAttacks(Square sq, uint64_t occupied) const;
+    
+    // --- NEW: Null move for null move pruning ---
+    void makeNullMove();
+    void unmakeNullMove();
 
 private:
     void removePiece(pieceType pt, Square sq);

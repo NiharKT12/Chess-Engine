@@ -74,6 +74,13 @@ const int piece_values[6] = { 100, 320, 330, 500, 900, 20000 };
 
 
 int Search::scoreMove(Move move, int ply) const {
+    MoveFlag flag = getMoveFlag(move);
+    
+    // --- NEW: Boost castling moves ---
+    if (flag == KingCastle || flag == QueenCastle) {
+        return 7500;  // High priority for castling
+    }
+    
     if (getCapturedPiece(move) != noPiece) {
         // MVV-LVA scoring for captures
         return 10000 + piece_values[getCapturedPiece(move) % 6] - piece_values[getPieceMoved(move) % 6];
@@ -108,14 +115,16 @@ bool Search::isCheckMove(const Board& board, Move move) const {
 }
 
 Move Search::findBestMove(Board& board, int depth) {
-    // Clear history, killers, and counter moves before starting
-    std::memset(m_history, 0, sizeof(m_history));
-    std::memset(m_killers, 0, sizeof(m_killers));
-    std::memset(m_counterMoves, 0, sizeof(m_counterMoves));
-    m_transpositionTable.clear();
+// Clear history, killers, and counter moves before starting
+std::memset(m_history, 0, sizeof(m_history));
+std::memset(m_killers, 0, sizeof(m_killers));
+std::memset(m_counterMoves, 0, sizeof(m_counterMoves));
+m_transpositionTable.clear();
 
-    Move bestMove = 0;
-    int prevScore = 0;
+
+
+Move bestMove = 0;
+int prevScore = 0;
 
     // --- NEW: Iterative Deepening with Aspiration Windows ---
     for (int current_depth = 1; current_depth <= depth; ++current_depth) {
@@ -135,21 +144,25 @@ Move Search::findBestMove(Board& board, int depth) {
         std::vector<Move> moveList;
         MoveGenerator::generateMoves(board, moveList);
 
-        std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { 
-            return scoreMove(a, 0) > scoreMove(b, 0); 
+        // --- FIXED: Simple move sorting without making/unmaking moves ---
+        std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) {
+            return scoreMove(a, 0) > scoreMove(b, 0);
         });
 
         Move currentBestMove = 0;
         for (const auto& move : moveList) {
             board.makeMove(move);
+            
             if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
                 int score = -negamax(board, current_depth - 1, -beta, -alpha, 1);
+                
                 if (score > bestScore) {
                     bestScore = score;
                     currentBestMove = move;
                     alpha = score;
                 }
             }
+            
             board.unmakeMove(move);
         }
 
@@ -164,13 +177,16 @@ Move Search::findBestMove(Board& board, int depth) {
 
             for (const auto& move : moveList) {
                 board.makeMove(move);
+                
                 if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
                     int score = -negamax(board, current_depth - 1, -beta, -alpha, 1);
+                    
                     if (score > bestScore) {
                         bestScore = score;
                         currentBestMove = move;
                     }
                 }
+                
                 board.unmakeMove(move);
             }
         }
@@ -186,27 +202,51 @@ Move Search::findBestMove(Board& board, int depth) {
 
 
 int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
-    int alphaOrig = alpha;
-    uint64_t hash = board.getHashKey();
+// SAFETY: Hard limit to prevent stack overflow
+if (ply > 50) {
+    return evaluate(board);
+}
+    
+int alphaOrig = alpha;
+uint64_t hash = board.getHashKey();
 
-    if (m_transpositionTable.count(hash)) {
-        const TTEntry& entry = m_transpositionTable.at(hash);
-        if (entry.depth >= depth) {
-            if (entry.flag == TTEntry::EXACT) return entry.score;
-            if (entry.flag == TTEntry::LOWERBOUND) alpha = std::max(alpha, entry.score);
-            else if (entry.flag == TTEntry::UPPERBOUND) beta = std::min(beta, entry.score);
-            if (alpha >= beta) return entry.score;
-        }
+if (m_transpositionTable.count(hash)) {
+    const TTEntry& entry = m_transpositionTable.at(hash);
+    if (entry.depth >= depth) {
+        if (entry.flag == TTEntry::EXACT) return entry.score;
+        if (entry.flag == TTEntry::LOWERBOUND) alpha = std::max(alpha, entry.score);
+        else if (entry.flag == TTEntry::UPPERBOUND) beta = std::min(beta, entry.score);
+        if (alpha >= beta) return entry.score;
     }
+}
 
-    if (depth == 0) {
-        return quiescence(board, alpha, beta);
+if (depth <= 0) {
+    return quiescence(board, alpha, beta);
+}
+    
+Side sideToMove = board.getSideToMove();
+Side opponentSide = (Side)(1 - sideToMove);
+bool inCheck = board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide);
+    
+// Check extension - extend search when in check
+if (inCheck) {
+    depth++;
+}
+    
+// Null Move Pruning - skip our turn to see if position is still good
+if (!inCheck && depth >= 3 && ply > 0) {
+    // Make null move (just switch side)
+    board.makeNullMove();
+    int nullScore = -negamax(board, depth - 3, -beta, -beta + 1, ply + 1);
+    board.unmakeNullMove();
+        
+    if (nullScore >= beta) {
+        return beta; // Position is so good we can skip searching
     }
+}
 
     int max = -999999;
     Move bestMove = 0;
-    Side sideToMove = board.getSideToMove();
-    Side opponentSide = (Side)(1 - sideToMove);
     std::vector<Move> moveList;
     MoveGenerator::generateMoves(board, moveList);
 
@@ -220,19 +260,24 @@ int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
     
     for (const auto& move : moveList) {
         board.makeMove(move);
+        
         if (!board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
             hasLegalMove = true;
             int score;
             moveCount++;
 
-            // --- NEW: Late Move Reductions (LMR) ---
-            // Only apply LMR to quiet moves that aren't the first few moves or killer moves
-            if (depth >= 3 && moveCount > 3 && 
+
+            // --- NEW: Late Move Reductions (LMR) - More aggressive ---
+            // Apply LMR to quiet moves earlier in the move list
+            if (depth >= 2 && moveCount > 2 && 
                 getCapturedPiece(move) == noPiece && 
                 !(ply < 64 && (move == m_killers[ply][0] || move == m_killers[ply][1]))) {
                 
                 // Calculate reduction amount from LMR table
                 int reduction = lmr_table[std::min(depth, 63)][std::min(moveCount, 63)];
+                reduction = std::min(reduction, depth - 1);  // Clamp to prevent negative depth
+                reduction += (depth >= 5 ? 1 : 0);  // Extra reduction for deep searches
+                
                 if (reduction > 0) {
                     score = -negamax(board, depth - 1 - reduction, -alpha - 1, -alpha, ply + 1);
                     
@@ -243,13 +288,13 @@ int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
                 } else {
                     score = -negamax(board, depth - 1, -beta, -alpha, ply + 1);
                 }
-            } else {
-                // --- NEW: Check extensions (extend search for checking moves) ---
-                int extension = 0;
-                score = -negamax(board, depth - 1 + extension, -beta, -alpha, ply + 1);
-            }
-
-            board.unmakeMove(move);
+             } else {
+                 // --- NEW: Check extensions (extend search for checking moves) ---
+                 int extension = 0;
+                 score = -negamax(board, depth - 1 + extension, -beta, -alpha, ply + 1);
+             }
+             
+             board.unmakeMove(move);
             
             if (score > max) {
                 max = score;
@@ -277,10 +322,11 @@ int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
 
     if (!hasLegalMove) {
         if (board.isSquareAttacked(board.getKingSquare(sideToMove), opponentSide)) {
-            return -99999 + depth;
+            // --- FIX: Checkmate - prefer faster mates (closer to root = higher depth value) ---
+            return -99999 + (64 - depth);  // Mate scores: closer mates are better
         }
         else {
-            return 0;
+            return 0;  // Stalemate
         }
     }
 
@@ -300,10 +346,19 @@ int Search::negamax(Board& board, int depth, int alpha, int beta, int ply) {
 
 
 int Search::quiescence(Board& board, int alpha, int beta) {
+    // Stand pat evaluation
     int stand_pat = evaluate(board);
+    
     if (stand_pat >= beta) {
         return beta;
     }
+    
+    // Delta pruning - if we're way behind, don't bother searching captures
+    const int DELTA = 900; // Queen value
+    if (stand_pat + DELTA < alpha) {
+        return alpha;
+    }
+    
     if (alpha < stand_pat) {
         alpha = stand_pat;
     }
@@ -312,9 +367,14 @@ int Search::quiescence(Board& board, int alpha, int beta) {
     Side opponentSide = (Side)(1 - sideToMove);
     std::vector<Move> moveList;
     MoveGenerator::generateMoves(board, moveList);
-    std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { return scoreMove(a, 0) > scoreMove(b, 0); });
+    
+    // Sort captures by MVV-LVA
+    std::sort(moveList.begin(), moveList.end(), [this](Move a, Move b) { 
+        return scoreMove(a, 0) > scoreMove(b, 0); 
+    });
 
     for (const auto& move : moveList) {
+        // Only search captures
         if (getCapturedPiece(move) == noPiece) {
             continue;
         }
@@ -340,19 +400,24 @@ int Search::quiescence(Board& board, int alpha, int beta) {
 
 
 int Search::evaluate(const Board& board) {
-    int score = 0;
-    Side sideToMove = board.getSideToMove();
-    for (int i = 0; i < 12; ++i) {
-        pieceType pt = (pieceType)i;
-        uint64_t bitboard = board.getPieceBitboard(pt);
-        while (bitboard) {
-            Square sq = pop_lsb(bitboard);
-            score += material[pt];
+int score = 0;
+Side sideToMove = board.getSideToMove();
+    
+// --- NEW: Count pieces for game phase detection ---
+uint64_t allPieces = board.getOccupied();
+int pieceCount = popcount(allPieces);
+    
+for (int i = 0; i < 12; ++i) {
+    pieceType pt = (pieceType)i;
+    uint64_t bitboard = board.getPieceBitboard(pt);
+    while (bitboard) {
+        Square sq = pop_lsb(bitboard);
+        score += material[pt];
 
-            if (pt == whitePawn) score += pawn_pst[sq];
-            else if (pt == blackPawn) score -= pawn_pst[63 - sq];
-            else if (pt == whiteKnight) score += knight_pst[sq];
-            else if (pt == blackKnight) score -= knight_pst[63 - sq];
+        if (pt == whitePawn) score += pawn_pst[sq];
+        else if (pt == blackPawn) score -= pawn_pst[63 - sq];
+        else if (pt == whiteKnight) score += knight_pst[sq];
+        else if (pt == blackKnight) score -= knight_pst[63 - sq];
             else if (pt == whiteBishop) score += bishop_pst[sq];
             else if (pt == blackBishop) score -= bishop_pst[63 - sq];
             else if (pt == whiteRook) score += rook_pst[sq];
@@ -364,10 +429,56 @@ int Search::evaluate(const Board& board) {
         }
     }
     
-    // --- NEW: Add positional evaluations ---
+    // --- Evaluation functions for positional strength ---
     score += evaluateKingSafety(board);
     score += evaluatePawnStructure(board);
     score += evaluatePieceMobility(board);
+    
+    // --- NEW: Bishop pair bonus ---
+    int whiteBishopCount = popcount(board.getPieceBitboard(whiteBishop));
+    int blackBishopCount = popcount(board.getPieceBitboard(blackBishop));
+    if (whiteBishopCount >= 2) score += 30;
+    if (blackBishopCount >= 2) score -= 30;
+    
+    // --- NEW: Rook on open file bonus ---
+    uint64_t whitePawns = board.getPieceBitboard(whitePawn);
+    uint64_t blackPawns = board.getPieceBitboard(blackPawn);
+    uint64_t whiteRooks = board.getPieceBitboard(whiteRook);
+    uint64_t blackRooks = board.getPieceBitboard(blackRook);
+    
+    while (whiteRooks) {
+        Square sq = pop_lsb(whiteRooks);
+        int file = sq % 8;
+        uint64_t fileMask = 0x0101010101010101ULL << file;
+        if (!(whitePawns & fileMask)) {
+            score += 15; // Semi-open file
+            if (!(blackPawns & fileMask)) {
+                score += 15; // Open file
+            }
+        }
+    }
+    
+    while (blackRooks) {
+        Square sq = pop_lsb(blackRooks);
+        int file = sq % 8;
+        uint64_t fileMask = 0x0101010101010101ULL << file;
+        if (!(blackPawns & fileMask)) {
+            score -= 15; // Semi-open file
+            if (!(whitePawns & fileMask)) {
+                score -= 15; // Open file
+            }
+        }
+    }
+    
+    // --- NEW: Reward castling rights (incentivize keeping castling safe) ---
+    if (board.canCastle(W, true) || board.canCastle(W, false)) score += 25;
+    if (board.canCastle(B, true) || board.canCastle(B, false)) score -= 25;
+    
+    // --- NEW: Detect check threats ---
+    Side opponentSide = (Side)(1 - sideToMove);
+    if (board.isSquareAttacked(board.getKingSquare(opponentSide), sideToMove)) {
+        score += 50;
+    }
     
     return (sideToMove == W) ? score : -score;
 }

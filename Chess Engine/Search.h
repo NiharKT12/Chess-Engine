@@ -13,7 +13,7 @@ struct TTEntry {
 
 class Search {
 public:
-    Move findBestMove(Board& board, int depth);
+Move findBestMove(Board& board, int depth);
 
 private:
     int negamax(Board& board, int depth, int alpha, int beta, int ply);

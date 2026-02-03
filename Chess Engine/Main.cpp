@@ -86,7 +86,7 @@ void drawSideSelectionMenu(bool whiteButtonHovered, bool blackButtonHovered) {
     DrawText(blackText, blackButtonX + (buttonWidth - blackTextWidth) / 2, blackButtonY + 20, 40, WHITE);
 }
 
-// Function to check if a point is inside a rectangle
+// Helper function to check if a point is inside a rectangle
 bool isPointInRect(Vector2 point, Rectangle rect) {
     return point.x >= rect.x && point.x <= rect.x + rect.width &&
            point.y >= rect.y && point.y <= rect.y + rect.height;
@@ -116,6 +116,10 @@ int main() {
     bool isGameOver = false;
     Move lastMove = 0;
     Side gameWinner = W;
+    
+    // --- NEW: Track position history for repetition detection ---
+    std::vector<uint64_t> positionHistory;
+    positionHistory.push_back(board.getHashKey());  // Add starting position
 
     // --- MAIN GAME LOOP ---
     while (!WindowShouldClose()) {
@@ -159,6 +163,8 @@ int main() {
                 legalMoves.clear();
                 isGameOver = false;
                 lastMove = 0;
+                positionHistory.clear();  // --- NEW: Reset position history ---
+                positionHistory.push_back(board.getHashKey());  // --- NEW: Add starting position ---
                 renderer.setPerspective(W);  // --- NEW: Reset perspective to white ---
             }
             else if (IsKeyPressed(KEY_Q)) {
@@ -193,6 +199,7 @@ int main() {
                     for (const auto& move : legalMoves) {
                         if (getToSquare(move) == clickedSquare) {
                             board.makeMove(move);
+                            positionHistory.push_back(board.getHashKey());  // --- NEW: Track position ---
                             lastMove = move;
                             selectedSquare = NO_SQUARE; legalMoves.clear(); isMoveMade = true;
                             break;
@@ -223,9 +230,10 @@ int main() {
 
         // --- AI Player Turn ---
         if (currentTurn != playerSide && !isGameOver) {
-            Move bestMove = search.findBestMove(board, 5);
+            Move bestMove = search.findBestMove(board, 6);
             if (bestMove != 0) { 
                 board.makeMove(bestMove);
+                positionHistory.push_back(board.getHashKey());
                 lastMove = bestMove;
             }
         }

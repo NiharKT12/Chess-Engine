@@ -289,3 +289,35 @@ void Board::removePiece(pieceType pt, Square sq) {
     m_pieceBitboards[pt] &= ~(1ULL << sq);
 }
 
+// --- NEW: Null move implementation for null move pruning ---
+void Board::makeNullMove() {
+    // Save current state
+    BoardState state;
+    state.castlingRights = m_castlingRights;
+    state.enPassantSquare = m_enPassantSquare;
+    state.hashKey = m_hashKey;
+    m_history.push_back(state);
+    
+    // Switch side to move
+    m_sideToMove = (Side)(1 - m_sideToMove);
+    m_hashKey ^= Zobrist::blackToMoveKey;
+    
+    // Clear en passant
+    if (m_enPassantSquare != NO_SQUARE) {
+        m_hashKey ^= Zobrist::enPassantKeys[m_enPassantSquare % 8];
+        m_enPassantSquare = NO_SQUARE;
+    }
+}
+
+void Board::unmakeNullMove() {
+    // Restore state from history
+    BoardState state = m_history.back();
+    m_history.pop_back();
+    
+    m_sideToMove = (Side)(1 - m_sideToMove);
+    m_castlingRights = state.castlingRights;
+    m_enPassantSquare = state.enPassantSquare;
+    m_hashKey = state.hashKey;
+}
+
+
