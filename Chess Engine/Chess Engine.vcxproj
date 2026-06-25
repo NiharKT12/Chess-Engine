@@ -156,6 +156,10 @@
     <Image Include="..\Assets\chess-rook-black.png" />
     <Image Include="..\Assets\chess-rook-white.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ERROR_FIX_SUMMARY.md" />
+    <None Include="REPETITION_FIX.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

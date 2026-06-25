@@ -92,4 +92,8 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="REPETITION_FIX.md" />
+    <None Include="ERROR_FIX_SUMMARY.md" />
+  </ItemGroup>
 </Project>
