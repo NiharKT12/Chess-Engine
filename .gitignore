@@ -362,7 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 
 Chess Engine/headless_engine
-
+    
 .env
 
 __pycache__/
