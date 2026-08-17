@@ -360,6 +360,11 @@ MigrationBackup/
 .ionide/
 
 # Fody - auto-generated XML schema
-FodyWeavers.xsdChess Engine/headless_engine
 
 Chess Engine/headless_engine
+
+.env
+
+__pycache__/
+
+*.Identifier   

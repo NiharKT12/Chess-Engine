@@ -1,0 +1,562 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 22.81      0.13     0.13   521102     0.00     0.00  Search::evaluatePawnStructure(Board const&)
+ 14.04      0.21     0.08 41808925     0.00     0.00  Search::scoreMove(unsigned int, int) const
+ 12.28      0.28     0.07  4255026     0.00     0.00  Board::getRookAttacks(Square, unsigned long) const
+  5.26      0.31     0.03  4941138     0.00     0.00  Board::getPieceOnSquare(Square) const
+  5.26      0.34     0.03   284634     0.00     0.00  Search::quiescence(Board&, int, int)
+  5.26      0.37     0.03   205773     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  5.26      0.40     0.03      330     0.09     1.70  Search::negamax(Board&, int, int, int, int)
+  3.51      0.42     0.02  3854776     0.00     0.00  Board::getBishopAttacks(Square, unsigned long) const
+  3.51      0.44     0.02  1537288     0.00     0.00  Board::isSquareAttacked(Square, Side) const
+  3.51      0.46     0.02   607793     0.00     0.00  Board::makeMove(unsigned int)
+  3.51      0.48     0.02   521102     0.00     0.00  Search::evaluatePieceMobility(Board const&)
+  3.51      0.50     0.02   234046     0.00     0.00  MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&)
+  3.51      0.52     0.02   205773     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  1.75      0.53     0.01  2433773     0.00     0.00  Board::getKingSquare(Side) const
+  1.75      0.54     0.01  1506223     0.00     0.00  void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&)
+  1.75      0.55     0.01   234046     0.00     0.00  MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&)
+  1.75      0.56     0.01       12     0.83     0.83  std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&)
+  1.75      0.57     0.01                             _init
+  0.00      0.57     0.00 21652961     0.00     0.00  Board::getPieceBitboard(pieceType) const
+  0.00      0.57     0.00  6435563     0.00     0.00  Board::getPieces(Side) const
+  0.00      0.57     0.00  6058725     0.00     0.00  Board::getOccupied() const
+  0.00      0.57     0.00  1975026     0.00     0.00  Board::canCastle(Side, bool) const
+  0.00      0.57     0.00  1691690     0.00     0.00  Board::getSideToMove() const
+  0.00      0.57     0.00   607793     0.00     0.00  Board::unmakeMove(unsigned int)
+  0.00      0.57     0.00   521102     0.00     0.00  Search::evaluateKingSafety(Board const&)
+  0.00      0.57     0.00   521102     0.00     0.00  Search::evaluate(Board const&)
+  0.00      0.57     0.00   234046     0.00     0.00  MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&)
+  0.00      0.57     0.00   234046     0.00     0.00  MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&)
+  0.00      0.57     0.00   234046     0.00     0.00  MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&)
+  0.00      0.57     0.00   234046     0.00     0.00  Board::getEnPassantSquare() const
+  0.00      0.57     0.00    28266     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  0.00      0.57     0.00    28266     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  0.00      0.57     0.00    28262     0.00     0.00  std::__detail::_Map_base<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true>, true>::operator[](unsigned long const&)
+  0.00      0.57     0.00     2069     0.00     0.00  Board::makeNullMove()
+  0.00      0.57     0.00     2069     0.00     0.00  Board::unmakeNullMove()
+  0.00      0.57     0.00       64     0.00     0.00  MoveGenerator::initKingAttacks(int)
+  0.00      0.57     0.00       64     0.00     0.00  MoveGenerator::initPawnAttacks(int)
+  0.00      0.57     0.00       64     0.00     0.00  MoveGenerator::initKnightAttacks(int)
+  0.00      0.57     0.00        7     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>)
+  0.00      0.57     0.00        7     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>)
+  0.00      0.57     0.00        6     0.00     0.00  void std::vector<BoardState, std::allocator<BoardState> >::_M_realloc_insert<BoardState>(__gnu_cxx::__normal_iterator<BoardState*, std::vector<BoardState, std::allocator<BoardState> > >, BoardState&&)
+  0.00      0.57     0.00        3     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>)
+  0.00      0.57     0.00        3     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>)
+  0.00      0.57     0.00        2     0.00     0.00  Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+  0.00      0.57     0.00        2     0.00     0.00  Board::generateHashKey() const
+  0.00      0.57     0.00        1     0.00     0.00  jsonEscape(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)
+  0.00      0.57     0.00        1     0.00     0.00  moveToString[abi:cxx11](unsigned int)
+  0.00      0.57     0.00        1     0.00     0.00  MoveGenerator::init()
+  0.00      0.57     0.00        1     0.00     0.00  Board::Board()
+  0.00      0.57     0.00        1     0.00   560.00  Search::findBestMove(Board&, int)
+  0.00      0.57     0.00        1     0.00     0.00  Zobrist::init()
+  0.00      0.57     0.00        1     0.00     0.00  std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::~_Hashtable()
+  0.00      0.57     0.00        1     0.00     0.00  std::vector<BoardState, std::allocator<BoardState> >::~vector()
+  0.00      0.57     0.00        1     0.00     0.00  frame_dummy
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2024 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 1.75% of 0.57 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     98.2    0.00    0.56                 main [1]
+                0.00    0.56       1/1           Search::findBestMove(Board&, int) [2]
+                0.00    0.00       1/1           MoveGenerator::init() [56]
+                0.00    0.00       1/1           Zobrist::init() [58]
+                0.00    0.00       1/1           Board::Board() [57]
+                0.00    0.00       1/2           Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [52]
+                0.00    0.00       1/1           moveToString[abi:cxx11](unsigned int) [55]
+                0.00    0.00       1/1           jsonEscape(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [54]
+                0.00    0.00       1/1           frame_dummy [33]
+                0.00    0.00       1/1           std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::~_Hashtable() [59]
+                0.00    0.00       1/1           std::vector<BoardState, std::allocator<BoardState> >::~vector() [60]
+-----------------------------------------------
+                0.00    0.56       1/1           main [1]
+[2]     98.2    0.00    0.56       1         Search::findBestMove(Board&, int) [2]
+                0.03    0.53     330/330         Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.00      33/284634      Search::quiescence(Board&, int, int) [4]
+                0.00    0.00     330/1537288     Board::isSquareAttacked(Square, Side) const [12]
+                0.00    0.00     330/607793      Board::makeMove(unsigned int) [19]
+                0.00    0.00       7/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+                0.00    0.00     330/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00       7/7           void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [29]
+                0.00    0.00       7/234046      MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00     444/41808925     Search::scoreMove(unsigned int, int) const [7]
+                0.00    0.00       7/7           void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [30]
+                0.00    0.00       3/3           void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [31]
+                0.00    0.00       3/3           void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [32]
+                0.00    0.00     330/607793      Board::unmakeMove(unsigned int) [44]
+                0.00    0.00       7/1691690     Board::getSideToMove() const [43]
+-----------------------------------------------
+                              316679             Search::negamax(Board&, int, int, int, int) [3]
+                0.03    0.53     330/330         Search::findBestMove(Board&, int) [2]
+[3]     98.2    0.03    0.53     330+316679  Search::negamax(Board&, int, int, int, int) [3]
+                0.03    0.44  284601/284634      Search::quiescence(Board&, int, int) [4]
+                0.00    0.01  371265/1537288     Board::isSquareAttacked(Square, Side) const [12]
+                0.01    0.00  342637/607793      Board::makeMove(unsigned int) [19]
+                0.00    0.01   28262/28262       std::__detail::_Map_base<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true>, true>::operator[](unsigned long const&) [23]
+                0.00    0.01   28266/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+                0.00    0.01   28266/28266       void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [26]
+                0.00    0.00   28266/28266       void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [27]
+                0.00    0.00   28266/234046      MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00 1470398/41808925     Search::scoreMove(unsigned int, int) const [7]
+                0.00    0.00  371265/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00  342637/607793      Board::unmakeMove(unsigned int) [44]
+                0.00    0.00   28624/1691690     Board::getSideToMove() const [43]
+                0.00    0.00    2069/2069        Board::makeNullMove() [46]
+                0.00    0.00    2069/2069        Board::unmakeNullMove() [47]
+                              316679             Search::negamax(Board&, int, int, int, int) [3]
+-----------------------------------------------
+                              236468             Search::quiescence(Board&, int, int) [4]
+                0.00    0.00      33/284634      Search::findBestMove(Board&, int) [2]
+                0.03    0.44  284601/284634      Search::negamax(Board&, int, int, int, int) [3]
+[4]     82.4    0.03    0.44  284634+236468  Search::quiescence(Board&, int, int) [4]
+                0.00    0.22  521102/521102      Search::evaluate(Board const&) [5]
+                0.03    0.03  205773/205773      void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [11]
+                0.00    0.06  205773/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+                0.02    0.03  205773/205773      void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [13]
+                0.01    0.02  205773/234046      MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.01  264826/1537288     Board::isSquareAttacked(Square, Side) const [12]
+                0.01    0.00 4707823/41808925     Search::scoreMove(unsigned int, int) const [7]
+                0.01    0.00  264826/607793      Board::makeMove(unsigned int) [19]
+                0.00    0.00  264826/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00  264826/607793      Board::unmakeMove(unsigned int) [44]
+                0.00    0.00  205773/1691690     Board::getSideToMove() const [43]
+                              236468             Search::quiescence(Board&, int, int) [4]
+-----------------------------------------------
+                0.00    0.22  521102/521102      Search::quiescence(Board&, int, int) [4]
+[5]     38.2    0.00    0.22  521102         Search::evaluate(Board const&) [5]
+                0.13    0.00  521102/521102      Search::evaluatePawnStructure(Board const&) [6]
+                0.02    0.04  521102/521102      Search::evaluatePieceMobility(Board const&) [10]
+                0.01    0.01  521102/1537288     Board::isSquareAttacked(Square, Side) const [12]
+                0.00    0.00  521102/521102      Search::evaluateKingSafety(Board const&) [28]
+                0.00    0.00  521102/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00 9379836/21652961     Board::getPieceBitboard(pieceType) const [39]
+                0.00    0.00 1563554/1975026     Board::canCastle(Side, bool) const [42]
+                0.00    0.00  521102/1691690     Board::getSideToMove() const [43]
+                0.00    0.00  521102/6058725     Board::getOccupied() const [41]
+-----------------------------------------------
+                0.13    0.00  521102/521102      Search::evaluate(Board const&) [5]
+[6]     22.8    0.13    0.00  521102         Search::evaluatePawnStructure(Board const&) [6]
+                0.00    0.00 1042204/21652961     Board::getPieceBitboard(pieceType) const [39]
+-----------------------------------------------
+                0.00    0.00     153/41808925     void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [32]
+                0.00    0.00     231/41808925     void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [31]
+                0.00    0.00     345/41808925     void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [30]
+                0.00    0.00     444/41808925     Search::findBestMove(Board&, int) [2]
+                0.00    0.00     667/41808925     void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [29]
+                0.00    0.00 1470398/41808925     Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.00 2392015/41808925     void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [27]
+                0.01    0.00 2770000/41808925     void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [26]
+                0.01    0.00 4707823/41808925     Search::quiescence(Board&, int, int) [4]
+                0.03    0.00 14125109/41808925     void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [13]
+                0.03    0.00 16341740/41808925     void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [11]
+[7]     14.0    0.08    0.00 41808925         Search::scoreMove(unsigned int, int) const [7]
+-----------------------------------------------
+                0.01    0.00  670555/4255026     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.02    0.00 1514907/4255026     Board::isSquareAttacked(Square, Side) const [12]
+                0.03    0.00 2069564/4255026     Search::evaluatePieceMobility(Board const&) [10]
+[8]     12.3    0.07    0.00 4255026         Board::getRookAttacks(Square, unsigned long) const [8]
+-----------------------------------------------
+                0.00    0.00       7/234046      Search::findBestMove(Board&, int) [2]
+                0.00    0.01   28266/234046      Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.06  205773/234046      Search::quiescence(Board&, int, int) [4]
+[9]     12.2    0.00    0.07  234046         MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+                0.00    0.03  234046/234046      MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.02    0.01  234046/234046      MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.01  234046/234046      MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+-----------------------------------------------
+                0.02    0.04  521102/521102      Search::evaluate(Board const&) [5]
+[10]    11.1    0.02    0.04  521102         Search::evaluatePieceMobility(Board const&) [10]
+                0.03    0.00 2069564/4255026     Board::getRookAttacks(Square, unsigned long) const [8]
+                0.01    0.00 1768085/3854776     Board::getBishopAttacks(Square, unsigned long) const [18]
+                0.00    0.00 5499379/6435563     Board::getPieces(Side) const [40]
+                0.00    0.00 3837649/6058725     Board::getOccupied() const [41]
+                0.00    0.00 3126612/21652961     Board::getPieceBitboard(pieceType) const [39]
+-----------------------------------------------
+                              411293             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [11]
+                0.03    0.03  205773/205773      Search::quiescence(Board&, int, int) [4]
+[11]    10.7    0.03    0.03  205773+411293  void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [11]
+                0.03    0.00 16341740/41808925     Search::scoreMove(unsigned int, int) const [7]
+                              411293             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [11]
+-----------------------------------------------
+                0.00    0.00     330/1537288     Search::findBestMove(Board&, int) [2]
+                0.00    0.01  264826/1537288     Search::quiescence(Board&, int, int) [4]
+                0.00    0.01  371265/1537288     Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.01  379765/1537288     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.01    0.01  521102/1537288     Search::evaluate(Board const&) [5]
+[12]     9.2    0.02    0.03 1537288         Board::isSquareAttacked(Square, Side) const [12]
+                0.02    0.00 1514907/4255026     Board::getRookAttacks(Square, unsigned long) const [8]
+                0.01    0.00 1502279/3854776     Board::getBishopAttacks(Square, unsigned long) const [18]
+-----------------------------------------------
+                0.02    0.03  205773/205773      Search::quiescence(Board&, int, int) [4]
+[13]     8.3    0.02    0.03  205773         void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>) [13]
+                0.03    0.00 14125109/41808925     Search::scoreMove(unsigned int, int) const [7]
+-----------------------------------------------
+                0.00    0.03  234046/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+[14]     5.5    0.00    0.03  234046         MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.02    0.00 2683363/4941138     Board::getPieceOnSquare(Square) const [15]
+                0.01    0.00  670555/4255026     Board::getRookAttacks(Square, unsigned long) const [8]
+                0.00    0.00  584412/3854776     Board::getBishopAttacks(Square, unsigned long) const [18]
+                0.00    0.00  155052/1506223     void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&) [22]
+                0.00    0.00 2191151/21652961     Board::getPieceBitboard(pieceType) const [39]
+                0.00    0.00 1254967/6058725     Board::getOccupied() const [41]
+                0.00    0.00  234046/1691690     Board::getSideToMove() const [43]
+                0.00    0.00  234046/6435563     Board::getPieces(Side) const [40]
+-----------------------------------------------
+                0.00    0.00   41977/4941138     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.00  692816/4941138     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.01    0.00 1522982/4941138     MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.02    0.00 2683363/4941138     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+[15]     5.3    0.03    0.00 4941138         Board::getPieceOnSquare(Square) const [15]
+-----------------------------------------------
+                0.00    0.00       7/234046      Search::findBestMove(Board&, int) [2]
+                0.00    0.00   28266/234046      Search::negamax(Board&, int, int, int, int) [3]
+                0.01    0.02  205773/234046      Search::quiescence(Board&, int, int) [4]
+[16]     5.0    0.01    0.02  234046         MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.01  379765/1537288     Board::isSquareAttacked(Square, Side) const [12]
+                0.00    0.00  692816/4941138     Board::getPieceOnSquare(Square) const [15]
+                0.00    0.00  234046/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00   47413/1506223     void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&) [22]
+                0.00    0.00  411472/1975026     Board::canCastle(Side, bool) const [42]
+                0.00    0.00  234046/1691690     Board::getSideToMove() const [43]
+                0.00    0.00  234046/6435563     Board::getPieces(Side) const [40]
+                0.00    0.00  234046/21652961     Board::getPieceBitboard(pieceType) const [39]
+                0.00    0.00  210961/6058725     Board::getOccupied() const [41]
+-----------------------------------------------
+                0.02    0.01  234046/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+[17]     4.9    0.02    0.01  234046         MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.01    0.00 1141569/1506223     void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&) [22]
+                0.00    0.00   41977/4941138     Board::getPieceOnSquare(Square) const [15]
+                0.00    0.00  234046/1691690     Board::getSideToMove() const [43]
+                0.00    0.00  234046/21652961     Board::getPieceBitboard(pieceType) const [39]
+                0.00    0.00  234046/6058725     Board::getOccupied() const [41]
+                0.00    0.00  234046/6435563     Board::getPieces(Side) const [40]
+                0.00    0.00  234046/234046      Board::getEnPassantSquare() const [45]
+-----------------------------------------------
+                0.00    0.00  584412/3854776     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.01    0.00 1502279/3854776     Board::isSquareAttacked(Square, Side) const [12]
+                0.01    0.00 1768085/3854776     Search::evaluatePieceMobility(Board const&) [10]
+[18]     3.5    0.02    0.00 3854776         Board::getBishopAttacks(Square, unsigned long) const [18]
+-----------------------------------------------
+                0.00    0.00     330/607793      Search::findBestMove(Board&, int) [2]
+                0.01    0.00  264826/607793      Search::quiescence(Board&, int, int) [4]
+                0.01    0.00  342637/607793      Search::negamax(Board&, int, int, int, int) [3]
+[19]     3.5    0.02    0.00  607793         Board::makeMove(unsigned int) [19]
+                0.00    0.00       6/6           void std::vector<BoardState, std::allocator<BoardState> >::_M_realloc_insert<BoardState>(__gnu_cxx::__normal_iterator<BoardState*, std::vector<BoardState, std::allocator<BoardState> > >, BoardState&&) [51]
+-----------------------------------------------
+                0.00    0.01  234046/234046      MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [9]
+[20]     1.8    0.00    0.01  234046         MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.01    0.00 1522982/4941138     Board::getPieceOnSquare(Square) const [15]
+                0.00    0.00  162189/1506223     void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&) [22]
+                0.00    0.00  234046/1691690     Board::getSideToMove() const [43]
+                0.00    0.00  234046/21652961     Board::getPieceBitboard(pieceType) const [39]
+                0.00    0.00  234046/6435563     Board::getPieces(Side) const [40]
+-----------------------------------------------
+                0.00    0.00     330/2433773     Search::findBestMove(Board&, int) [2]
+                0.00    0.00  234046/2433773     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00  264826/2433773     Search::quiescence(Board&, int, int) [4]
+                0.00    0.00  371265/2433773     Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.00  521102/2433773     Search::evaluate(Board const&) [5]
+                0.00    0.00 1042204/2433773     Search::evaluateKingSafety(Board const&) [28]
+[21]     1.8    0.01    0.00 2433773         Board::getKingSquare(Side) const [21]
+-----------------------------------------------
+                0.00    0.00   47413/1506223     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00  155052/1506223     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.00    0.00  162189/1506223     MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.01    0.00 1141569/1506223     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+[22]     1.8    0.01    0.00 1506223         void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&) [22]
+-----------------------------------------------
+                0.00    0.01   28262/28262       Search::negamax(Board&, int, int, int, int) [3]
+[23]     1.8    0.00    0.01   28262         std::__detail::_Map_base<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true>, true>::operator[](unsigned long const&) [23]
+                0.01    0.00      12/12          std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&) [24]
+-----------------------------------------------
+                0.01    0.00      12/12          std::__detail::_Map_base<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true>, true>::operator[](unsigned long const&) [23]
+[24]     1.8    0.01    0.00      12         std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&) [24]
+-----------------------------------------------
+                                                 <spontaneous>
+[25]     1.8    0.01    0.00                 _init [25]
+-----------------------------------------------
+                0.00    0.01   28266/28266       Search::negamax(Board&, int, int, int, int) [3]
+[26]     0.9    0.00    0.01   28266         void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [26]
+                0.01    0.00 2770000/41808925     Search::scoreMove(unsigned int, int) const [7]
+-----------------------------------------------
+                               59975             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [27]
+                0.00    0.00   28266/28266       Search::negamax(Board&, int, int, int, int) [3]
+[27]     0.8    0.00    0.00   28266+59975   void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [27]
+                0.00    0.00 2392015/41808925     Search::scoreMove(unsigned int, int) const [7]
+                               59975             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>) [27]
+-----------------------------------------------
+                0.00    0.00  521102/521102      Search::evaluate(Board const&) [5]
+[28]     0.8    0.00    0.00  521102         Search::evaluateKingSafety(Board const&) [28]
+                0.00    0.00 1042204/2433773     Board::getKingSquare(Side) const [21]
+                0.00    0.00 5211020/21652961     Board::getPieceBitboard(pieceType) const [39]
+-----------------------------------------------
+                                  16             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [29]
+                0.00    0.00       7/7           Search::findBestMove(Board&, int) [2]
+[29]     0.0    0.00    0.00       7+16      void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [29]
+                0.00    0.00     667/41808925     Search::scoreMove(unsigned int, int) const [7]
+                                  16             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [29]
+-----------------------------------------------
+                0.00    0.00       7/7           Search::findBestMove(Board&, int) [2]
+[30]     0.0    0.00    0.00       7         void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>) [30]
+                0.00    0.00     345/41808925     Search::scoreMove(unsigned int, int) const [7]
+-----------------------------------------------
+                                   6             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [31]
+                0.00    0.00       3/3           Search::findBestMove(Board&, int) [2]
+[31]     0.0    0.00    0.00       3+6       void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [31]
+                0.00    0.00     231/41808925     Search::scoreMove(unsigned int, int) const [7]
+                                   6             void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [31]
+-----------------------------------------------
+                0.00    0.00       3/3           Search::findBestMove(Board&, int) [2]
+[32]     0.0    0.00    0.00       3         void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>) [32]
+                0.00    0.00     153/41808925     Search::scoreMove(unsigned int, int) const [7]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[33]     0.0    0.00    0.00       1         frame_dummy [33]
+-----------------------------------------------
+                0.00    0.00  234046/21652961     MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.00    0.00  234046/21652961     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.00  234046/21652961     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00 1042204/21652961     Search::evaluatePawnStructure(Board const&) [6]
+                0.00    0.00 2191151/21652961     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.00    0.00 3126612/21652961     Search::evaluatePieceMobility(Board const&) [10]
+                0.00    0.00 5211020/21652961     Search::evaluateKingSafety(Board const&) [28]
+                0.00    0.00 9379836/21652961     Search::evaluate(Board const&) [5]
+[39]     0.0    0.00    0.00 21652961         Board::getPieceBitboard(pieceType) const [39]
+-----------------------------------------------
+                0.00    0.00  234046/6435563     MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.00    0.00  234046/6435563     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.00    0.00  234046/6435563     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.00  234046/6435563     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00 5499379/6435563     Search::evaluatePieceMobility(Board const&) [10]
+[40]     0.0    0.00    0.00 6435563         Board::getPieces(Side) const [40]
+-----------------------------------------------
+                0.00    0.00  210961/6058725     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00  234046/6058725     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.00  521102/6058725     Search::evaluate(Board const&) [5]
+                0.00    0.00 1254967/6058725     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.00    0.00 3837649/6058725     Search::evaluatePieceMobility(Board const&) [10]
+[41]     0.0    0.00    0.00 6058725         Board::getOccupied() const [41]
+-----------------------------------------------
+                0.00    0.00  411472/1975026     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00 1563554/1975026     Search::evaluate(Board const&) [5]
+[42]     0.0    0.00    0.00 1975026         Board::canCastle(Side, bool) const [42]
+-----------------------------------------------
+                0.00    0.00       7/1691690     Search::findBestMove(Board&, int) [2]
+                0.00    0.00   28624/1691690     Search::negamax(Board&, int, int, int, int) [3]
+                0.00    0.00  205773/1691690     Search::quiescence(Board&, int, int) [4]
+                0.00    0.00  234046/1691690     MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [20]
+                0.00    0.00  234046/1691690     MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [14]
+                0.00    0.00  234046/1691690     MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+                0.00    0.00  234046/1691690     MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [16]
+                0.00    0.00  521102/1691690     Search::evaluate(Board const&) [5]
+[43]     0.0    0.00    0.00 1691690         Board::getSideToMove() const [43]
+-----------------------------------------------
+                0.00    0.00     330/607793      Search::findBestMove(Board&, int) [2]
+                0.00    0.00  264826/607793      Search::quiescence(Board&, int, int) [4]
+                0.00    0.00  342637/607793      Search::negamax(Board&, int, int, int, int) [3]
+[44]     0.0    0.00    0.00  607793         Board::unmakeMove(unsigned int) [44]
+-----------------------------------------------
+                0.00    0.00  234046/234046      MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [17]
+[45]     0.0    0.00    0.00  234046         Board::getEnPassantSquare() const [45]
+-----------------------------------------------
+                0.00    0.00    2069/2069        Search::negamax(Board&, int, int, int, int) [3]
+[46]     0.0    0.00    0.00    2069         Board::makeNullMove() [46]
+-----------------------------------------------
+                0.00    0.00    2069/2069        Search::negamax(Board&, int, int, int, int) [3]
+[47]     0.0    0.00    0.00    2069         Board::unmakeNullMove() [47]
+-----------------------------------------------
+                0.00    0.00      64/64          MoveGenerator::init() [56]
+[48]     0.0    0.00    0.00      64         MoveGenerator::initKingAttacks(int) [48]
+-----------------------------------------------
+                0.00    0.00      64/64          MoveGenerator::init() [56]
+[49]     0.0    0.00    0.00      64         MoveGenerator::initPawnAttacks(int) [49]
+-----------------------------------------------
+                0.00    0.00      64/64          MoveGenerator::init() [56]
+[50]     0.0    0.00    0.00      64         MoveGenerator::initKnightAttacks(int) [50]
+-----------------------------------------------
+                0.00    0.00       6/6           Board::makeMove(unsigned int) [19]
+[51]     0.0    0.00    0.00       6         void std::vector<BoardState, std::allocator<BoardState> >::_M_realloc_insert<BoardState>(__gnu_cxx::__normal_iterator<BoardState*, std::vector<BoardState, std::allocator<BoardState> > >, BoardState&&) [51]
+-----------------------------------------------
+                0.00    0.00       1/2           main [1]
+                0.00    0.00       1/2           Board::Board() [57]
+[52]     0.0    0.00    0.00       2         Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [52]
+                0.00    0.00       2/2           Board::generateHashKey() const [53]
+-----------------------------------------------
+                0.00    0.00       2/2           Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [52]
+[53]     0.0    0.00    0.00       2         Board::generateHashKey() const [53]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[54]     0.0    0.00    0.00       1         jsonEscape(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [54]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[55]     0.0    0.00    0.00       1         moveToString[abi:cxx11](unsigned int) [55]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[56]     0.0    0.00    0.00       1         MoveGenerator::init() [56]
+                0.00    0.00      64/64          MoveGenerator::initKingAttacks(int) [48]
+                0.00    0.00      64/64          MoveGenerator::initKnightAttacks(int) [50]
+                0.00    0.00      64/64          MoveGenerator::initPawnAttacks(int) [49]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[57]     0.0    0.00    0.00       1         Board::Board() [57]
+                0.00    0.00       1/2           Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [52]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[58]     0.0    0.00    0.00       1         Zobrist::init() [58]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[59]     0.0    0.00    0.00       1         std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::~_Hashtable() [59]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[60]     0.0    0.00    0.00       1         std::vector<BoardState, std::allocator<BoardState> >::~vector() [60]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2024 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [54] jsonEscape(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [2] Search::findBestMove(Board&, int) [40] Board::getPieces(Side) const
+  [55] moveToString[abi:cxx11](unsigned int) [28] Search::evaluateKingSafety(Board const&) [7] Search::scoreMove(unsigned int, int) const
+   [9] MoveGenerator::generateMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [6] Search::evaluatePawnStructure(Board const&) [24] std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::_M_rehash(unsigned long, unsigned long const&)
+  [48] MoveGenerator::initKingAttacks(int) [10] Search::evaluatePieceMobility(Board const&) [59] std::_Hashtable<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true> >::~_Hashtable()
+  [49] MoveGenerator::initPawnAttacks(int) [3] Search::negamax(Board&, int, int, int, int) [51] void std::vector<BoardState, std::allocator<BoardState> >::_M_realloc_insert<BoardState>(__gnu_cxx::__normal_iterator<BoardState*, std::vector<BoardState, std::allocator<BoardState> > >, BoardState&&)
+  [16] MoveGenerator::generateKingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [5] Search::evaluate(Board const&) [60] std::vector<BoardState, std::allocator<BoardState> >::~vector()
+  [17] MoveGenerator::generatePawnMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [58] Zobrist::init() [22] void std::vector<unsigned int, std::allocator<unsigned int> >::_M_realloc_insert<unsigned int>(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, unsigned int&&)
+  [50] MoveGenerator::initKnightAttacks(int) [41] Board::getOccupied() const [23] std::__detail::_Map_base<unsigned long, std::pair<unsigned long const, TTEntry>, std::allocator<std::pair<unsigned long const, TTEntry> >, std::__detail::_Select1st, std::equal_to<unsigned long>, std::hash<unsigned long>, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<false, false, true>, true>::operator[](unsigned long const&)
+  [20] MoveGenerator::generateKnightMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [21] Board::getKingSquare(Side) const [13] void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [14] MoveGenerator::generateSlidingMoves(Board const&, std::vector<unsigned int, std::allocator<unsigned int> >&) [43] Board::getSideToMove() const [32] void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>)
+  [56] MoveGenerator::init()   [8] Board::getRookAttacks(Square, unsigned long) const [30] void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [44] Board::unmakeMove(unsigned int) [53] Board::generateHashKey() const [26] void std::__insertion_sort<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [46] Board::makeNullMove()  [18] Board::getBishopAttacks(Square, unsigned long) const [11] void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::quiescence(Board&, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [52] Board::setupFromFen(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) [39] Board::getPieceBitboard(pieceType) const [31] void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#2}>)
+  [47] Board::unmakeNullMove() [15] Board::getPieceOnSquare(Square) const [29] void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::findBestMove(Board&, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [19] Board::makeMove(unsigned int) [12] Board::isSquareAttacked(Square, Side) const [27] void std::__introsort_loop<__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}> >(__gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int*, std::vector<unsigned int, std::allocator<unsigned int> > >, long, __gnu_cxx::__ops::_Iter_comp_iter<Search::negamax(Board&, int, int, int, int)::{lambda(unsigned int, unsigned int)#1}>)
+  [57] Board::Board()         [45] Board::getEnPassantSquare() const [25] _init
+   [4] Search::quiescence(Board&, int, int) [42] Board::canCastle(Side, bool) const [33] frame_dummy
