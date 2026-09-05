@@ -1,6 +1,10 @@
 #pragma once
 #include <cstdint>
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif
+
 // Enum for the side to move (White or Black)
 enum Side {
     W = 0, B = 1
@@ -38,6 +42,13 @@ enum MoveFlag {
     KnightPromoCapture = 12, BishopPromoCapture = 13, RookPromoCapture = 14, QueenPromoCapture = 15
 };
 
+// How a finished game ended. Used by the renderer to announce the result.
+enum GameResult {
+    RESULT_WHITE_WINS,
+    RESULT_BLACK_WINS,
+    RESULT_DRAW
+};
+
 // A move is packed into a 32-bit integer for efficiency.
 using Move = uint32_t;
 
@@ -61,3 +72,35 @@ inline pieceType getPromotionPiece(Move move) { return (pieceType)((move >> 20) 
 // Extracts the move flag (bits 24-27)
 inline MoveFlag getMoveFlag(Move move) { return (MoveFlag)((move >> 24) & 0xF); }
 
+// True if the move promotes a pawn (covers both plain and capturing promotions).
+inline bool isPromotion(Move move) { return getMoveFlag(move) >= KnightPromotion; }
+
+// --- Shared bit-twiddling helpers ---
+// These used to be duplicated in Board.cpp, MoveGen.cpp and Search.cpp.
+
+// Returns the index of the least significant set bit and clears it.
+inline Square pop_lsb(uint64_t& bitboard) {
+    if (bitboard == 0) return NO_SQUARE;
+#ifdef _MSC_VER
+    unsigned long index;
+    _BitScanForward64(&index, bitboard);
+#else
+    unsigned long index = (unsigned long)__builtin_ctzll(bitboard);
+#endif
+    bitboard &= bitboard - 1;
+    return (Square)index;
+}
+
+// Number of set bits.
+inline int popcount(uint64_t x) {
+#ifdef _MSC_VER
+    return (int)__popcnt64(x);
+#else
+    return __builtin_popcountll(x);
+#endif
+}
+
+// The piece-square tables are written with index 0 == a8, but Square has A1 == 0.
+// A white piece on 'sq' therefore reads table entry sq ^ 56; a black piece, which
+// is mirrored vertically before lookup, reads table entry sq.
+inline int pstIndex(Square sq, Side side) { return (side == W) ? (sq ^ 56) : (int)sq; }

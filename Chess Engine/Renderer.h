@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <algorithm> // For std::min
 #include <vector>
 #include <map>
 #include <utility> // For std::pair
@@ -15,6 +16,11 @@ public:
     Renderer();
     // Destructor: Unloads all graphical assets to free memory.
     ~Renderer();
+
+    // The renderer owns raw GPU texture handles and frees them in its
+    // destructor, so copying one would unload the same textures twice.
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
 
     // --- NEW: Set the perspective (player side) ---
     // Call this to rotate the board when player is black
@@ -35,8 +41,9 @@ public:
     // Draws the last move indicator (glow on from and to squares)
     void drawLastMove(Move lastMove) const;
 
-    // Draws the game over screen with winner announcement
-    void drawGameOverScreen(Side winner, bool isCheckmate) const;
+    // Draws the game over screen. `reason` describes how the game ended
+    // ("Checkmate!", "Stalemate!", "Draw by repetition", ...).
+    void drawGameOverScreen(GameResult result, const char* reason) const;
 
     // Helper function to provide the board's screen layout information.
     // This is used by main.cpp to calculate mouse-to-square conversions.

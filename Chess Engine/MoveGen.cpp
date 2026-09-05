@@ -3,10 +3,6 @@
 #include <iostream>
 #include <cmath> // For std::abs
 
-#ifdef _MSC_VER // If using the Microsoft Visual C++ compiler
-#include <intrin.h> // Include this header for _BitScanForward64
-#endif
-
 // Initialize static member variables
 uint64_t MoveGenerator::king_attacks[64];
 uint64_t MoveGenerator::knight_attacks[64];
@@ -16,19 +12,7 @@ uint64_t MoveGenerator::pawn_attacks[2][64];
 const uint64_t notAFile = 0xfefefefefefefefeULL;
 const uint64_t notHFile = 0x7f7f7f7f7f7f7f7fULL;
 
-// --- Helper function to get the index of the least significant bit and clear it ---
-inline Square pop_lsb(uint64_t& bitboard) {
-    if (bitboard == 0) return NO_SQUARE;
-#ifdef _MSC_VER
-    unsigned long index;
-    _BitScanForward64(&index, bitboard);
-    Square lsb_index = (Square)index;
-#else
-    Square lsb_index = (Square)__builtin_ctzll(bitboard);
-#endif
-    bitboard &= (bitboard - 1);
-    return lsb_index;
-}
+// pop_lsb now lives in Type.h, shared by every translation unit.
 
 // --- INITIALIZATION ---
 void MoveGenerator::init() {
@@ -129,7 +113,6 @@ void MoveGenerator::generatePawnMoves(const Board& board, std::vector<Move>& mov
     // --- FIX: Correct promotion ranks (rank 8 for white, rank 1 for black) ---
     uint64_t promotionRank = (side == W) ? 0xFF00000000000000ULL : 0x00000000000000FFULL;
     uint64_t rank2 = (side == W) ? 0x000000000000FF00ULL : 0x00FF000000000000ULL;
-    uint64_t rank3 = (side == W) ? 0x0000000000FF0000ULL : 0x0000FF0000000000ULL;
 
     // --- Single Pushes ---
     uint64_t singlePushes = (side == W ? (pawns << 8) : (pawns >> 8)) & empty;
@@ -154,7 +137,7 @@ void MoveGenerator::generatePawnMoves(const Board& board, std::vector<Move>& mov
     }
 
     // --- FIX: Correct double push logic ---
-    uint64_t doublePushPawns = (side == W) ? (pawns & rank2) : (pawns & rank2);
+    uint64_t doublePushPawns = pawns & rank2;
     uint64_t doublePushes = (side == W ? ((doublePushPawns << 8) & empty) << 8 : ((doublePushPawns >> 8) & empty) >> 8) & empty;
 
     uint64_t pushes = doublePushes;
@@ -275,11 +258,15 @@ void MoveGenerator::generateSlidingMoves(const Board& board, std::vector<Move>& 
     pieceType queen = (side == W) ? whiteQueen : blackQueen;
     pieceType bishop = (side == W) ? whiteBishop : blackBishop;
 
-    uint64_t rooksAndQueens = board.getPieceBitboard(rook) | board.getPieceBitboard(queen);
+    const uint64_t occupied = board.getOccupied();
+    const uint64_t rookBB = board.getPieceBitboard(rook);
+    const uint64_t bishopBB = board.getPieceBitboard(bishop);
+
+    uint64_t rooksAndQueens = rookBB | board.getPieceBitboard(queen);
     while (rooksAndQueens) {
         Square from = pop_lsb(rooksAndQueens);
-        pieceType piece = (board.getPieceBitboard(rook) & (1ULL << from)) ? rook : queen;
-        uint64_t attacks = board.getRookAttacks(from, board.getOccupied()) & ~friendlyPieces;
+        pieceType piece = (rookBB & (1ULL << from)) ? rook : queen;
+        uint64_t attacks = board.getRookAttacks(from, occupied) & ~friendlyPieces;
         while (attacks) {
             Square to = pop_lsb(attacks);
             pieceType captured = board.getPieceOnSquare(to);
@@ -288,11 +275,11 @@ void MoveGenerator::generateSlidingMoves(const Board& board, std::vector<Move>& 
         }
     }
 
-    uint64_t bishopsAndQueens = board.getPieceBitboard(bishop) | board.getPieceBitboard(queen);
+    uint64_t bishopsAndQueens = bishopBB | board.getPieceBitboard(queen);
     while (bishopsAndQueens) {
         Square from = pop_lsb(bishopsAndQueens);
-        pieceType piece = (board.getPieceBitboard(bishop) & (1ULL << from)) ? bishop : queen;
-        uint64_t attacks = board.getBishopAttacks(from, board.getOccupied()) & ~friendlyPieces;
+        pieceType piece = (bishopBB & (1ULL << from)) ? bishop : queen;
+        uint64_t attacks = board.getBishopAttacks(from, occupied) & ~friendlyPieces;
         while (attacks) {
             Square to = pop_lsb(attacks);
             pieceType captured = board.getPieceOnSquare(to);

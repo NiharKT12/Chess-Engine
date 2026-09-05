@@ -5,8 +5,17 @@
 // --- CONSTRUCTOR & DESTRUCTOR ---
 
 Renderer::Renderer() {
-    // Relative path to the asset folder. Adjust if your executable is in a different location.
-    const std::string assetPath = "../Assets/";
+    // The assets live next to the solution, but the working directory depends on
+    // how the program was launched (Visual Studio, a double-click, or a shell).
+    // Probe the usual spots instead of assuming one.
+    const char* candidates[] = { "../Assets/", "Assets/", "../../Assets/", "../../../Assets/" };
+    std::string assetPath = candidates[0];
+    for (const char* candidate : candidates) {
+        if (FileExists((std::string(candidate) + "chess-pawn-white.png").c_str())) {
+            assetPath = candidate;
+            break;
+        }
+    }
 
     // Load textures for all 12 piece types and store them in the map.
     // The map key is the pieceType enum value.
@@ -24,10 +33,13 @@ Renderer::Renderer() {
     m_pieceTextures[blackQueen] = LoadTexture((assetPath + "chess-queen-black.png").c_str());
     m_pieceTextures[blackKing] = LoadTexture((assetPath + "chess-king-black.png").c_str());
 
-    // Error checking to ensure all textures were loaded successfully.
+    // Error checking to ensure all textures were loaded successfully. drawPieces
+    // falls back to a plain disc for any that are missing, so the game stays
+    // playable rather than crashing on a zero-width texture.
     for (const auto& pair : m_pieceTextures) {
         if (pair.second.id <= 0) {
-            std::cerr << "ERROR: Failed to load texture for pieceType index " << pair.first << std::endl;
+            std::cerr << "ERROR: Failed to load texture for pieceType index " << pair.first
+                      << " (looked in " << assetPath << ")" << std::endl;
         }
     }
 
@@ -70,10 +82,13 @@ void Renderer::drawBoard() const {
     getBoardDimensions(size, offsetX, offsetY);
     float squareSize = size / 8.0f;
 
-    // Manually draw the checkerboard for perfect alignment
+    // Manually draw the checkerboard for perfect alignment.
+    // Row 0 is the top of the screen, which is a8 from White's side, and a8 is
+    // a light square -- so an even (row + file) must be light. The pattern is
+    // unchanged by the 180-degree flip used for Black's perspective.
     for (int rank = 0; rank < 8; ++rank) {
         for (int file = 0; file < 8; ++file) {
-            bool isLightSquare = (rank + file) % 2 != 0;
+            bool isLightSquare = (rank + file) % 2 == 0;
             Color squareColor = isLightSquare ? Color{ 238, 238, 210, 255 } : Color{ 118, 150, 86, 255 };
             DrawRectangle(offsetX + file * squareSize, offsetY + rank * squareSize, squareSize, squareSize, squareColor);
         }
@@ -90,26 +105,28 @@ void Renderer::drawPieces(const Board& board) const {
         Square sq = (Square)i;
         pieceType pt = board.getPieceOnSquare(sq);
 
-        // If a piece exists on the square...
-        if (pt != noPiece) {
-            try {
-                // ...find its texture in our map...
-                Texture2D texture = m_pieceTextures.at(pt);
+        if (pt == noPiece) continue;
 
-                // ...calculate its position on the screen using perspective...
-                int displayFile, displayRank;
-                getDisplayCoordinates(sq, displayFile, displayRank);
-                Vector2 position = { offsetX + displayFile * squareSize, offsetY + displayRank * squareSize };
+        // ...calculate its position on the screen using perspective...
+        int displayFile, displayRank;
+        getDisplayCoordinates(sq, displayFile, displayRank);
+        const Vector2 position = { offsetX + displayFile * squareSize, offsetY + displayRank * squareSize };
 
-                // ...and draw it, scaled to fit the square.
-                DrawTextureEx(texture, position, 0.0f, squareSize / texture.width, WHITE);
-
-            }
-            catch (const std::out_of_range& e) {
-                // This catch block will prevent a crash if a texture is missing from the map.
-                std::cerr << "ERROR: Texture not found for pieceType " << pt << std::endl;
-            }
+        // A texture that failed to load has id 0 and width 0, so scaling by
+        // squareSize / width would divide by zero. Fall back to a plain
+        // coloured disc so the piece is at least visible and playable.
+        auto it = m_pieceTextures.find(pt);
+        if (it == m_pieceTextures.end() || it->second.id <= 0 || it->second.width <= 0) {
+            const Color fallback = (pt < blackPawn) ? Color{ 250, 250, 250, 255 } : Color{ 30, 30, 30, 255 };
+            DrawCircleV({ position.x + squareSize / 2.0f, position.y + squareSize / 2.0f },
+                        squareSize * 0.35f, fallback);
+            DrawCircleLines((int)(position.x + squareSize / 2.0f), (int)(position.y + squareSize / 2.0f),
+                            squareSize * 0.35f, GRAY);
+            continue;
         }
+
+        // ...and draw it, scaled to fit the square.
+        DrawTextureEx(it->second, position, 0.0f, squareSize / it->second.width, WHITE);
     }
 }
 
@@ -153,14 +170,13 @@ void Renderer::drawCheckIndicator(const Board& board) const {
         float kingX = offsetX + displayFile * squareSize;
         float kingY = offsetY + displayRank * squareSize;
 
-        // Draw red glow effect around the king
+        // Draw a red glow around the king, thickening towards the square edge.
         for (int i = 3; i > 0; --i) {
-            float radius = (squareSize / 2.0f) * (i / 3.0f);
-            Color glowColor = { 255, 0, 0, (unsigned char)(180 - i * 50) };
-            DrawRectangleLines(kingX, kingY, squareSize, squareSize, glowColor);
+            const Color glowColor = { 255, 0, 0, (unsigned char)(180 - i * 40) };
+            const float inset = (float)(3 - i);
+            DrawRectangleLines(kingX + inset, kingY + inset,
+                               squareSize - 2 * inset, squareSize - 2 * inset, glowColor);
         }
-
-        // Draw a pulsing red border
         DrawRectangleLines(kingX, kingY, squareSize, squareSize, { 255, 0, 0, 255 });
     }
 }
@@ -204,27 +220,27 @@ void Renderer::drawLastMove(Move lastMove) const {
     }
 }
 
-void Renderer::drawGameOverScreen(Side winner, bool isCheckmate) const {
+void Renderer::drawGameOverScreen(GameResult result, const char* reason) const {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
 
     // Draw semi-transparent dark overlay
-    DrawRectangle(0, 0, screenWidth, screenHeight, Fade({ 0, 0, 0 }, 0.7f));
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.7f));
 
-    // Determine the winner text
-    const char* winnerText = (winner == W) ? "White Wins!" : "Black Wins!";
-    const char* conditionText = isCheckmate ? "Checkmate!" : "Stalemate!";
-    
-    // Draw winner announcement
+    const char* headline = (result == RESULT_WHITE_WINS) ? "White Wins!"
+                         : (result == RESULT_BLACK_WINS) ? "Black Wins!"
+                         : "Draw";
+    Color headlineColor = (result == RESULT_WHITE_WINS) ? Color{ 238, 238, 210, 255 }
+                        : (result == RESULT_BLACK_WINS) ? Color{ 118, 150, 86, 255 }
+                        : Color{ 200, 200, 200, 255 };
+
     int fontSize1 = 80;
-    int textWidth1 = MeasureText(winnerText, fontSize1);
-    Color winnerColor = (winner == W) ? Color{ 238, 238, 210, 255 } : Color{ 118, 150, 86, 255 };
-    DrawText(winnerText, (screenWidth - textWidth1) / 2, (screenHeight / 2) - 80, fontSize1, winnerColor);
+    int textWidth1 = MeasureText(headline, fontSize1);
+    DrawText(headline, (screenWidth - textWidth1) / 2, (screenHeight / 2) - 80, fontSize1, headlineColor);
 
-    // Draw condition text (Checkmate or Stalemate)
     int fontSize2 = 40;
-    int textWidth2 = MeasureText(conditionText, fontSize2);
-    DrawText(conditionText, (screenWidth - textWidth2) / 2, (screenHeight / 2) + 40, fontSize2, WHITE);
+    int textWidth2 = MeasureText(reason, fontSize2);
+    DrawText(reason, (screenWidth - textWidth2) / 2, (screenHeight / 2) + 40, fontSize2, WHITE);
 
     // Draw instructions to restart
     const char* restartText = "Press R to Restart or Q to Quit";
